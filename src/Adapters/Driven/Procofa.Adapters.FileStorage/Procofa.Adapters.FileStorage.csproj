@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <RootNamespace>Procofa.Adapters.FileStorage</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- TODO: agregar SDK de object storage (S3-compatible) según infraestructura final de PROCOFA (Semana 7). -->
+    <ProjectReference Include="..\..\..\Core\Procofa.Application\Procofa.Application.csproj" />
+  </ItemGroup>
+
+</Project>

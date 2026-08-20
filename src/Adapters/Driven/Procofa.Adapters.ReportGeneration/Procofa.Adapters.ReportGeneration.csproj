@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <RootNamespace>Procofa.Adapters.ReportGeneration</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- TODO: agregar DocumentFormat.OpenXml (Word) + librería de conversión a PDF server-side (Semana 10). -->
+    <ProjectReference Include="..\..\..\Core\Procofa.Application\Procofa.Application.csproj" />
+  </ItemGroup>
+
+</Project>
