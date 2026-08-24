@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <!--
+    Procofa.Api: → Procofa.Application (Instrucción 02, sección 4).
+
+    NO referencia Procofa.Infrastructure todavía: la sección 4 permite esa
+    referencia física "si necesitas... para el Composition Root", y en este
+    turno Program.cs no compone nada de Infrastructure (no hay DbContext/
+    Npgsql/etc. que registrar — sección 11). Se añade en la Instrucción 03
+    cuando Program.cs llame a AddInfrastructure(...) de verdad.
+
+    Sin Microsoft.AspNetCore.OpenApi: no hay Swagger/OpenAPI en Foundation
+    (no hay endpoints funcionales que documentar todavía).
+  -->
+
+  <ItemGroup>
+    <ProjectReference Include="..\Procofa.Application\Procofa.Application.csproj" />
+  </ItemGroup>
+
+</Project>

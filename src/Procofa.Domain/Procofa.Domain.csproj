@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Procofa.Domain: sin dependencias externas ni a otros proyectos PROCOFA
+    (Instrucción 02, sección 4). TargetFramework/Nullable/ImplicitUsings
+    vienen de Directory.Build.props.
+
+    Deliberadamente vacío en Foundation: sin entidades, sin value objects,
+    sin Common/ especulativo (Instrucción 02, sección 9). El primer código
+    real de Domain llega en el siguiente bloque de implementación.
+  -->
+
+</Project>

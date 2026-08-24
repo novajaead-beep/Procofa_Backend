@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Procofa.Infrastructure: → Procofa.Application, → Procofa.Domain
+    (Instrucción 02, sección 4).
+
+    Vacío en Foundation: sin DbContext, sin Npgsql, sin ITenantUnitOfWork,
+    sin Outbox/S3/ReportGenerator (Instrucción 02, sección 11 — todo eso
+    llega en la Instrucción 03 y siguientes, cuando exista el contrato de
+    Application que implementar).
+  -->
+
+  <ItemGroup>
+    <ProjectReference Include="..\Procofa.Application\Procofa.Application.csproj" />
+    <ProjectReference Include="..\Procofa.Domain\Procofa.Domain.csproj" />
+  </ItemGroup>
+
+</Project>

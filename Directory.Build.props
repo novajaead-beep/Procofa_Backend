@@ -1,0 +1,34 @@
+<Project>
+
+  <!--
+    Propiedades comunes a todos los proyectos de la solución (src/ y tests/).
+    Centralizadas aquí para garantizar que ningún proyecto pueda desviarse
+    (ej. apuntar a otro Target Framework) sin que sea una decisión explícita
+    y visible en este archivo.
+  -->
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+
+    <!-- La solución debe compilar sin warnings (Instrucción 02, sección 8). -->
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+
+    <!-- Builds reproducibles; ninguno de los proyectos de este repo se publica como paquete NuGet. -->
+    <Deterministic>true</Deterministic>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <!--
+    Deliberadamente NO se habilita AnalysisLevel=latest ni EnforceCodeStyleInBuild
+    en este turno: combinado con TreatWarningsAsErrors, el análisis de estilo en
+    build convierte cualquier nit cosmético en un error de compilación — exactamente
+    lo que la sección 8 de la Instrucción 02 pide evitar ("no convertir Foundation
+    en una guerra contra reglas cosméticas"). El .editorconfig sí queda activo para
+    IDE/`dotnet format`; se puede promover a "enforced in build" más adelante como
+    decisión explícita, no como efecto secundario de Foundation.
+  -->
+
+</Project>
