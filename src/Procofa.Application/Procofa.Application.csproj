@@ -3,11 +3,12 @@
   <!--
     Procofa.Application: → Procofa.Domain únicamente (Instrucción 02, sección 4).
 
-    Vacío en Foundation: sin casos de uso, sin puertos, sin DI extension
-    method todavía. `AddApplication(IServiceCollection)` requeriría el
-    paquete Microsoft.Extensions.DependencyInjection.Abstractions, que no
-    hay nada real que registrar todavía (Instrucción 02, secciones 10 y 12)
-    — se añade en el turno donde aparezcan los primeros casos de uso.
+    Desde Instrucción 03: contiene los puertos de Tenancy
+    (Abstractions/Tenancy/ITenantContext.cs, ITenantUnitOfWork.cs) — puros,
+    sin EF Core/Npgsql/HttpContext. Sigue sin casos de uso ni DI extension
+    method (`AddApplication(IServiceCollection)` requeriría
+    Microsoft.Extensions.DependencyInjection.Abstractions, que se añade
+    cuando exista el primer caso de uso real que registrar).
   -->
 
   <ItemGroup>

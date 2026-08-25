@@ -4,11 +4,20 @@
     Procofa.Infrastructure: → Procofa.Application, → Procofa.Domain
     (Instrucción 02, sección 4).
 
-    Vacío en Foundation: sin DbContext, sin Npgsql, sin ITenantUnitOfWork,
-    sin Outbox/S3/ReportGenerator (Instrucción 02, sección 11 — todo eso
-    llega en la Instrucción 03 y siguientes, cuando exista el contrato de
-    Application que implementar).
+    Persistencia (Instrucción 03): EF Core + Npgsql para representar el
+    baseline PostgreSQL V2.1 existente. Microsoft.EntityFrameworkCore.Design
+    es PrivateAssets="all" — herramienta de diseño (dotnet ef) para poder
+    generar/inspeccionar migraciones desde este proyecto, sin filtrarse como
+    dependencia runtime hacia quien referencie Infrastructure.
   -->
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Procofa.Application\Procofa.Application.csproj" />

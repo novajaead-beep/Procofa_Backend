@@ -5,21 +5,22 @@
     <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
   </PropertyGroup>
 
-  <!--
-    Foundation (Instrucción 02): política conservadora — únicamente los paquetes
-    que los 4 proyectos tests/* necesitan para compilar y ejecutar xUnit. Ningún
-    proyecto src/* tiene PackageReference todavía (Domain/Application/Infrastructure
-    son classlib puros; Api usa exclusivamente el framework compartido ASP.NET Core
-    vía Microsoft.NET.Sdk.Web, sin OpenAPI/Swagger).
-
-    Versiones fijadas a las que trae empaquetadas el SDK .NET 10 instalado
-    (dotnet new xunit, SDK 10.0.111) para evitar un número arbitrario.
-  -->
   <ItemGroup Label="Testing">
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
     <PackageVersion Include="xunit" Version="2.9.3" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.4" />
     <PackageVersion Include="coverlet.collector" Version="6.0.4" />
+  </ItemGroup>
+
+  <ItemGroup Label="Persistence">
+    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="10.0.11" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.11" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.11" />
+    <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.3" />
+  </ItemGroup>
+
+  <ItemGroup Label="IntegrationTesting">
+    <PackageVersion Include="Testcontainers.PostgreSql" Version="4.14.0" />
   </ItemGroup>
 
 </Project>

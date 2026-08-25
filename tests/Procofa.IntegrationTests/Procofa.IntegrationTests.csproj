@@ -11,6 +11,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Testcontainers.PostgreSql" />
   </ItemGroup>
 
   <ItemGroup>
@@ -19,10 +20,14 @@
 
   <ItemGroup>
     <!--
-      Testcontainers/Npgsql llegan en la Instrucción 03 junto con la primera
-      prueba real de aislamiento RLS (sección 5: "No introducir todavía
-      infraestructura de PostgreSQL/Testcontainers... eso será parte de la
-      siguiente instrucción").
+      Instrucción 03: PostgreSQL 18 desechable vía Testcontainers (decisión
+      definitiva — no 16) para RLS/tenant isolation/concurrencia. Escritos en
+      esta instrucción pero NO ejecutados por Claude en ninguno de los dos
+      sandboxes de esta sesión: Docker Hub está bloqueado por el allowlist de
+      egress tanto en el sandbox cloud como en la VM del bridge del usuario
+      (esta última ni siquiera tiene el binario `docker`). Ver el reporte de
+      esta instrucción para el detalle y lo que se necesita para ejecutarlos
+      de verdad.
     -->
     <ProjectReference Include="..\..\src\Procofa.Infrastructure\Procofa.Infrastructure.csproj" />
     <ProjectReference Include="..\..\src\Procofa.Application\Procofa.Application.csproj" />
