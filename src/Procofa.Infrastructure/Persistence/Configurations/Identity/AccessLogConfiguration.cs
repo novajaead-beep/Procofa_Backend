@@ -7,7 +7,6 @@ using Procofa.Infrastructure.Persistence.Conversions.Enums;
 
 namespace Procofa.Infrastructure.Persistence.Configurations.Identity;
 
-/// <summary>Mapeo fiel de <c>public.access_logs</c>.</summary>
 public sealed class AccessLogConfiguration : IEntityTypeConfiguration<AccessLog>
 {
     public void Configure(EntityTypeBuilder<AccessLog> builder)

@@ -8,24 +8,6 @@ using Procofa.Domain.Entities.Infrastructure;
 
 namespace Procofa.Infrastructure.Persistence.Configurations.Infrastructure;
 
-/// <summary>
-/// Mapeo fiel de <c>public.audit_logs</c>. Tabla append-only — sin
-/// <c>updated_at_utc</c> (no existe físicamente); UPDATE/DELETE están
-/// bloqueados a nivel de BD por <c>trg_audit_logs_no_update</c>/
-/// <c>trg_audit_logs_no_delete</c> (<c>prevent_audit_log_mutation()</c>) y
-/// además por ACL (<c>procofa_app</c> sin GRANT de UPDATE/DELETE sobre esta
-/// tabla) — doble enforcement a nivel de BD, fuera de alcance de EF
-/// (Instrucción 03).
-///
-/// <see cref="AuditLog.IpAddress"/> mapea la columna física <c>inet</c>
-/// como <c>string</c> (Domain agnóstico de tipos de infraestructura) vía
-/// <c>.HasColumnType("inet")</c>; la conversión string↔inet de Npgsql debe
-/// verificarse en la primera corrida real de integration tests contra
-/// Postgres 18 (no ejecutable en este sandbox — NuGet restore bloqueado).
-/// FK a <c>tenants</c> es <c>ON DELETE RESTRICT</c> (no <c>CASCADE</c>) —
-/// la bitácora debe sobrevivir incluso ante intentos de eliminar el tenant;
-/// se replica tal cual existe en la BD real.
-/// </summary>
 public sealed class AuditLogConfiguration : IEntityTypeConfiguration<AuditLog>
 {
     public void Configure(EntityTypeBuilder<AuditLog> builder)

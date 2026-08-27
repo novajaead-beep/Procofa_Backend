@@ -1,23 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
-  <!--
-    Procofa.Api: → Procofa.Application, → Procofa.Infrastructure (Composition
-    Root — Instrucción 02 sección 4, permitido explícitamente "si necesitas...
-    para el Composition Root").
-
-    Desde Instrucción 03: Program.cs llama a AddInfrastructure(...) de verdad
-    (registra ProcofaDbContext + Npgsql + ConcurrencyTokenInterceptor). Sigue
-    sin registrar ITenantUnitOfWork/ITenantContext — ver el comentario de
-    Procofa.Infrastructure/DependencyInjection.cs (depende de Auth/JWT,
-    fuera de alcance de esta instrucción). "/health" sigue sin tocar la BD.
-
-    Sin Microsoft.AspNetCore.OpenApi: no hay Swagger/OpenAPI en Foundation
-    (no hay endpoints funcionales que documentar todavía).
-  -->
-
   <ItemGroup>
     <ProjectReference Include="..\Procofa.Application\Procofa.Application.csproj" />
     <ProjectReference Include="..\Procofa.Infrastructure\Procofa.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
 </Project>
