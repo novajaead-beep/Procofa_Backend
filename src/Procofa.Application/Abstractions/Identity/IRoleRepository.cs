@@ -11,4 +11,14 @@ namespace Procofa.Application.Abstractions.Identity;
 public interface IRoleRepository
 {
     Task<Role?> FindByCodeAsync(string code, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Instrucción 05: resuelve varios roles de una vez por su <see cref="Role.Code"/>
+    /// (asignación de roles al crear/editar un usuario) — evita N consultas
+    /// individuales. Códigos que no existen en el catálogo simplemente no
+    /// aparecen en el resultado; el caller compara la cuenta para detectar
+    /// códigos inválidos.
+    /// </summary>
+    Task<IReadOnlyCollection<Role>> FindManyByCodesAsync(
+        IReadOnlyCollection<string> codes, CancellationToken cancellationToken);
 }

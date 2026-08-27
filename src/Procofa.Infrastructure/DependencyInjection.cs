@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Procofa.Application.Abstractions;
+using Procofa.Application.Abstractions.Clients;
 using Procofa.Application.Abstractions.Identity;
 using Procofa.Application.Abstractions.Tenancy;
 using Procofa.Infrastructure.Persistence;
@@ -69,6 +70,12 @@ public static class DependencyInjection
         services.AddScoped<IRoleRepository, RoleRepository>();
         services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
         services.AddScoped<IAccessLogRepository, AccessLogRepository>();
+
+        // Instrucción 05: IUserRepository/IRoleRepository se AMPLIARON (no se
+        // duplicaron) para gestión de usuarios — ver sus nuevos miembros. Único
+        // repositorio nuevo: IClientRepository (solo lectura, necesario para
+        // validar clientIds de user_client_access).
+        services.AddScoped<IClientRepository, ClientRepository>();
 
         // Adapters de seguridad — sin estado propio salvo la config ya resuelta, seguros como singleton.
         services.AddSingleton<IPasswordHasher, PasswordHasherAdapter>();

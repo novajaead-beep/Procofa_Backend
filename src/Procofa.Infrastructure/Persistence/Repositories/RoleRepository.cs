@@ -14,4 +14,15 @@ public sealed class RoleRepository(ProcofaDbContext dbContext) : IRoleRepository
 {
     public Task<Role?> FindByCodeAsync(string code, CancellationToken cancellationToken) =>
         dbContext.Roles.FirstOrDefaultAsync(r => r.Code == code, cancellationToken);
+
+    public async Task<IReadOnlyCollection<Role>> FindManyByCodesAsync(
+        IReadOnlyCollection<string> codes, CancellationToken cancellationToken)
+    {
+        if (codes.Count == 0)
+        {
+            return [];
+        }
+
+        return await dbContext.Roles.Where(r => codes.Contains(r.Code)).ToListAsync(cancellationToken);
+    }
 }

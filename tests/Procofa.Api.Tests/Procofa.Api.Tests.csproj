@@ -11,15 +11,8 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <!--
-      Instrucción 04: WebApplicationFactory (Microsoft.AspNetCore.Mvc.Testing)
-      llega ahora que existe un endpoint funcional real que probar end-to-end
-      (Instrucción 02 sección 5: "Posteriormente Api.Tests podrá utilizar
-      WebApplicationFactory"). Requiere PostgreSQL real vía Testcontainers
-      (mismo motivo que Procofa.IntegrationTests) — no ejecutable en este
-      sandbox (Docker inalcanzable).
-    -->
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" />
   </ItemGroup>
 
   <ItemGroup>
@@ -27,12 +20,8 @@
   </ItemGroup>
 
   <ItemGroup>
+
     <ProjectReference Include="..\..\src\Procofa.Api\Procofa.Api.csproj" />
-    <!--
-      Reutiliza PostgresBaselineFixture/AuthHandlerFactory de
-      Procofa.IntegrationTests en vez de duplicar el bootstrap de
-      Testcontainers — única razón de esta referencia entre proyectos de test.
-    -->
     <ProjectReference Include="..\Procofa.IntegrationTests\Procofa.IntegrationTests.csproj" />
   </ItemGroup>
 

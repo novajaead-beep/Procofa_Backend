@@ -1,12 +1,24 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.IdentityModel.Tokens;
 using Procofa.Api.Bootstrap;
 using Procofa.Api.Configuration;
 using Procofa.Api.Endpoints;
+using Procofa.Api.Security;
+using Procofa.Application.Abstractions;
 using Procofa.Application.Abstractions.Identity;
 using Procofa.Application.UseCases.Auth.Login;
+using Procofa.Application.UseCases.Users.ChangeUserStatus;
+using Procofa.Application.UseCases.Users.CreateUser;
+using Procofa.Application.UseCases.Users.GetUser;
+using Procofa.Application.UseCases.Users.ListUsers;
+using Procofa.Application.UseCases.Users.ReplaceUserClientAccess;
+using Procofa.Application.UseCases.Users.ReplaceUserRoles;
 using Procofa.Infrastructure;
 
 // Instrucción 04, sección "BOOTSTRAP PRIMER ADMIN": host mode explícito,
@@ -43,6 +55,60 @@ builder.Services.AddInfrastructure();
 // depender de Microsoft.Extensions.DependencyInjection.Abstractions), se
 // registra aquí directamente en el Composition Root.
 builder.Services.AddScoped<LoginCommandHandler>();
+
+// Instrucción 05: casos de uso de gestión de usuarios — mismo Composition
+// Root, mismo criterio (registro directo, sin contenedor DI en Application).
+builder.Services.AddScoped<ListUsersQueryHandler>();
+builder.Services.AddScoped<GetUserQueryHandler>();
+builder.Services.AddScoped<CreateUserCommandHandler>();
+builder.Services.AddScoped<ChangeUserStatusCommandHandler>();
+builder.Services.AddScoped<ReplaceUserRolesCommandHandler>();
+builder.Services.AddScoped<ReplaceUserClientAccessCommandHandler>();
+
+// ICurrentUser (sección "IDENTIDAD DEL ADMIN ACTUAL"): implementación HTTP
+// vive en Api (Procofa.Api.Security.HttpContextCurrentUser) — Application
+// solo conoce el puerto. Scoped porque lee HttpContext.
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<ICurrentUser, HttpContextCurrentUser>();
+
+// Instrucción 05, sección 2 "AUTORIZACIÓN": primera vez que el proyecto
+// exige JWT — hasta ahora solo se EMITÍA el token (login), nunca se
+// VALIDABA en un endpoint protegido. Igual que ProcofaDb/InfrastructureAuthSettings,
+// la validación se registra vía AddOptions<T>().Configure<TDep>(...) — el
+// delegate recibe InfrastructureAuthSettings resuelto desde DI de forma
+// diferida (primera resolución real de JwtBearerOptions, no en este punto),
+// para que WebApplicationFactory pueda seguir sobreescribiendo Jwt:SigningKey
+// en tests exactamente como ya hace con ProcofaDb.
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer();
+
+builder.Services.AddOptions<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme)
+    .Configure<InfrastructureAuthSettings>((options, settings) =>
+    {
+        // MapInboundClaims=false (default en .NET 8+, explícito aquí a
+        // propósito): los claims del token quedan EXACTAMENTE como los emite
+        // JwtAccessTokenGenerator ("sub", "roles", "tenant_id", ...) — sin la
+        // conversión legacy a URIs de System.Security.Claims.ClaimTypes.
+        options.MapInboundClaims = false;
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidIssuer = settings.JwtIssuer,
+            ValidateAudience = true,
+            ValidAudience = settings.JwtAudience,
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(settings.JwtSigningKey)),
+            ValidateLifetime = true,
+            ClockSkew = TimeSpan.FromSeconds(30),
+            // JwtAccessTokenGenerator emite un claim "roles" por rol (no el
+            // URI legacy ClaimTypes.Role) — sin esto, [Authorize(Roles=...)]
+            // / RequireRole(...) nunca reconocerían los roles del token.
+            RoleClaimType = "roles",
+            NameClaimType = JwtRegisteredClaimNames.Sub,
+        };
+    });
+
+builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
@@ -84,12 +150,16 @@ app.UseExceptionHandler(errorApp =>
     });
 });
 
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.MapHealthChecks("/health", new HealthCheckOptions
 {
     ResponseWriter = WriteHealthCheckResponseAsync
 });
 
 app.MapAuthEndpoints();
+app.MapUserEndpoints();
 
 app.Run();
 return 0;
@@ -104,6 +174,4 @@ static Task WriteHealthCheckResponseAsync(HttpContext context, HealthReport repo
 // Procofa.Api.Tests (Instrucción 04) — los top-level statements generan
 // "Program" internal por defecto; esta declaración lo hace visible desde
 // el assembly de tests sin exponer nada más.
-public partial class Program
-{
-}
+public partial class Program;
