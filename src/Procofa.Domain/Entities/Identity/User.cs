@@ -63,7 +63,7 @@ public sealed class User
         TenantId = tenantId;
         Email = email;
         // Valor inicial en memoria; la BD es la autoridad final vía trigger.
-        NormalizedEmail = email.Trim().ToUpperInvariant();
+        NormalizedEmail = Normalize(email);
         PasswordHash = passwordHash;
         FirstName = firstName;
         LastName = lastName;
@@ -71,5 +71,66 @@ public sealed class User
         IsActive = true;
         MustChangePassword = false;
         FailedLoginAttempts = 0;
+    }
+
+    /// <summary>
+    /// Réplica en memoria de <c>normalize_user_email()</c>
+    /// (<c>UPPER(BTRIM(email))</c>) — <see cref="System.Globalization.CultureInfo.InvariantCulture"/>
+    /// vía <see cref="string.ToUpperInvariant()"/>, nunca <c>ToUpper()</c> con
+    /// cultura por defecto (evita el problema de la "I turca"). Usado por
+    /// Application para buscar un usuario por email sin depender de un
+    /// roundtrip a BD, y por el constructor para el valor inicial en memoria
+    /// (la BD sigue siendo la autoridad final vía trigger).
+    /// </summary>
+    public static string Normalize(string email) => email.Trim().ToUpperInvariant();
+
+    /// <summary>Instrucción 04: true si <see cref="LockedUntilUtc"/> sigue vigente respecto de <paramref name="nowUtc"/>.</summary>
+    public bool IsLockedOut(DateTime nowUtc) => LockedUntilUtc.HasValue && LockedUntilUtc.Value > nowUtc;
+
+    /// <summary>
+    /// Instrucción 04, flujo de login paso 8: incrementa
+    /// <see cref="FailedLoginAttempts"/> y aplica lockout
+    /// (<see cref="LockedUntilUtc"/> = <paramref name="nowUtc"/> + <paramref name="lockoutDuration"/>)
+    /// cuando se alcanza <paramref name="maxFailedAttempts"/>. La política
+    /// (umbral/duración) es responsabilidad de configuración — este método
+    /// solo aplica los valores ya resueltos, sin conocer de dónde vienen.
+    /// </summary>
+    public void RegisterFailedLogin(int maxFailedAttempts, TimeSpan lockoutDuration, DateTime nowUtc)
+    {
+        FailedLoginAttempts += 1;
+
+        if (FailedLoginAttempts >= maxFailedAttempts)
+        {
+            LockedUntilUtc = nowUtc.Add(lockoutDuration);
+        }
+    }
+
+    /// <summary>Instrucción 04, flujo de login paso 9: resetea intentos/bloqueo y actualiza el último login.</summary>
+    public void RegisterSuccessfulLogin(DateTime nowUtc)
+    {
+        FailedLoginAttempts = 0;
+        LockedUntilUtc = null;
+        LastLoginAtUtc = nowUtc;
+    }
+
+    /// <summary>
+    /// Reemplaza el hash de contraseña — usado por el flujo de login cuando
+    /// <c>IPasswordHasher</c> señala <c>SuccessRehashNeeded</c> (el hash
+    /// verificó correcto pero fue creado con parámetros desactualizados).
+    /// Nunca recibe una contraseña en texto plano: solo el hash ya calculado.
+    /// </summary>
+    public void ChangePasswordHash(string newPasswordHash)
+    {
+        PasswordHash = newPasswordHash;
+    }
+
+    /// <summary>
+    /// Asigna un rol de sistema al usuario (colección owned <see cref="Roles"/>,
+    /// tabla <c>user_roles</c>). Usado por el bootstrap del primer ADMIN y, en
+    /// instrucciones futuras, por gestión de usuarios.
+    /// </summary>
+    public void AddRole(UserRole userRole)
+    {
+        _roles.Add(userRole);
     }
 }

@@ -5,6 +5,16 @@
     <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
   </PropertyGroup>
 
+  <!--
+    Foundation (Instrucción 02): política conservadora — únicamente los paquetes
+    que los 4 proyectos tests/* necesitan para compilar y ejecutar xUnit. Ningún
+    proyecto src/* tiene PackageReference todavía (Domain/Application/Infrastructure
+    son classlib puros; Api usa exclusivamente el framework compartido ASP.NET Core
+    vía Microsoft.NET.Sdk.Web, sin OpenAPI/Swagger).
+
+    Versiones fijadas a las que trae empaquetadas el SDK .NET 10 instalado
+    (dotnet new xunit, SDK 10.0.111) para evitar un número arbitrario.
+  -->
   <ItemGroup Label="Testing">
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
     <PackageVersion Include="xunit" Version="2.9.3" />
@@ -12,15 +22,82 @@
     <PackageVersion Include="coverlet.collector" Version="6.0.4" />
   </ItemGroup>
 
-  <ItemGroup Label="Persistence">
-    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="10.0.11" />
-    <PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.11" />
-    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.11" />
-    <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.3" />
-  </ItemGroup>
+  <!--
+    Persistencia (Instrucción 03): EF Core + proveedor Npgsql para representar
+    el baseline PostgreSQL V2.1 existente. Microsoft.EntityFrameworkCore.Design
+    es herramienta de diseño (dotnet ef) — se consume únicamente en
+    Procofa.Infrastructure con PrivateAssets="all" para no filtrarse como
+    dependencia runtime (sección 3 de la instrucción).
 
+    Versiones: últimas estables publicadas en NuGet Gallery para la familia
+    EF Core 10 / Npgsql 10 al momento de esta instrucción (verificado por
+    búsqueda web — este sandbox tiene api.nuget.org bloqueado por egress, así
+    que estas versiones NO se han podido confirmar todavía con un
+    `dotnet restore` real; ver el bloqueo de red documentado en el reporte).
+  -->
+  <ItemGroup Label="Persistence">
+  <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="10.0.11" />
+  <PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.11" />
+  <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.11" />
+  <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.3" />
+</ItemGroup>
+
+  <!--
+    Testing de integración (Instrucción 03): PostgreSQL 18 desechable vía
+    Testcontainers — decisión definitiva (no PostgreSQL 16). Ver el reporte
+    de esta instrucción: Docker no está disponible/alcanzable en ninguno de
+    los dos sandboxes de esta sesión (Docker Hub bloqueado por allowlist de
+    egress en ambos), así que estos tests están escritos pero no ejecutados
+    por Claude en este entorno.
+  -->
   <ItemGroup Label="IntegrationTesting">
     <PackageVersion Include="Testcontainers.PostgreSql" Version="4.14.0" />
+  </ItemGroup>
+
+  <!--
+    Auth (Instrucción 04): hashing de contraseñas y emisión de JWT.
+    Microsoft.Extensions.Identity.Core trae PasswordHasher<TUser> sin el
+    resto de ASP.NET Core Identity (sin stores/UI) — versión alineada a la
+    familia 10.0.x ya usada por EF Core en este repo. System.IdentityModel.Tokens.Jwt
+    (+ su dependencia transitiva Microsoft.IdentityModel.Tokens) para
+    construir/firmar el JWT de acceso.
+
+    Igual que Persistence arriba: versiones verificadas por búsqueda web
+    (nuget.org), NO confirmadas con un `dotnet restore` real en este sandbox
+    — api.nuget.org sigue bloqueado por el egress allowlist.
+  -->
+  <ItemGroup Label="Auth">
+    <PackageVersion Include="Microsoft.Extensions.Identity.Core" Version="10.0.11" />
+    <PackageVersion Include="System.IdentityModel.Tokens.Jwt" Version="8.22.0" />
+  </ItemGroup>
+
+  <!--
+    Instrucción 04.2 — CERRAR AUTH: Procofa.Infrastructure/DependencyInjection.cs
+    ya no recibe la connection string de ProcofaDb como string ya resuelto —
+    la lee de IConfiguration dentro del delegate (sp, options) => ... de
+    AddDbContext, de forma diferida (mismo motivo que InfrastructureAuthSettings
+    resuelto vía DI). Procofa.Infrastructure es un classlib puro (Microsoft.NET.Sdk,
+    no .Web), así que no hereda el framework compartido de ASP.NET Core y
+    necesita esta referencia explícita para ver IConfiguration/GetConnectionString.
+    Versión alineada a la misma familia 10.0.11 ya usada por
+    Microsoft.Extensions.Identity.Core en este repo.
+  -->
+  <ItemGroup Label="Configuration">
+    <PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="10.0.11" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration" Version="10.0.11" />
+  </ItemGroup>
+
+  <!--
+    Api.Tests (Instrucción 04): WebApplicationFactory para las 3 pruebas
+    HTTP end-to-end de POST /api/auth/login que la instrucción pide
+    explícitamente (200/401/400) — el comentario de Instrucción 02 sección 5
+    ("Posteriormente Api.Tests podrá utilizar WebApplicationFactory") se
+    concreta aquí. Requiere PostgreSQL real (Testcontainers) porque el login
+    pasa por ITenantUnitOfWork/RLS de verdad — no ejecutable en este sandbox
+    (Docker inalcanzable), mismo caso que Procofa.IntegrationTests.
+  -->
+  <ItemGroup Label="ApiTesting">
+    <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="10.0.0" />
   </ItemGroup>
 
 </Project>

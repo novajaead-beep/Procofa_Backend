@@ -17,6 +17,17 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <!-- Instrucción 04: hashing (PasswordHasher<TUser>) + emisión de JWT. -->
+    <PackageReference Include="Microsoft.Extensions.Identity.Core" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" />
+    <!--
+      Instrucción 04.2 — CERRAR AUTH: IConfiguration/GetConnectionString(...)
+      resueltos de forma diferida dentro de AddDbContext (ver
+      DependencyInjection.cs). Classlib puro sin framework compartido de
+      ASP.NET Core, así que se referencian explícitamente.
+    -->
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" />
   </ItemGroup>
 
   <ItemGroup>

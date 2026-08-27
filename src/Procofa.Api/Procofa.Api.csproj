@@ -1,15 +1,28 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
+  <!--
+    Procofa.Api: → Procofa.Application, → Procofa.Infrastructure (Composition
+    Root — Instrucción 02 sección 4, permitido explícitamente "si necesitas...
+    para el Composition Root").
+
+    Desde Instrucción 03: Program.cs llama a AddInfrastructure(...) de verdad
+    (registra ProcofaDbContext + Npgsql + ConcurrencyTokenInterceptor).
+    "/health" sigue sin tocar la BD.
+
+    Desde Instrucción 04 (Auth): AddInfrastructure(...) recibe además
+    InfrastructureAuthSettings — ahora SÍ registra ITenantUnitOfWork/
+    ITenantContext (Stage1TenantContext) junto con los adapters de Auth
+    (hashing, JWT, refresh tokens). Se agrega POST /api/auth/login y el host
+    mode "bootstrap-admin" — ver Procofa.Api/Endpoints/AuthEndpoints.cs y
+    Procofa.Api/Bootstrap/BootstrapAdminRunner.cs.
+
+    Sin Microsoft.AspNetCore.OpenApi: alcance estricto de Instrucción 04
+    excluye explícitamente Swagger/OpenAPI ("NO IMPLEMENTAR TODAVÍA").
+  -->
+
   <ItemGroup>
     <ProjectReference Include="..\Procofa.Application\Procofa.Application.csproj" />
     <ProjectReference Include="..\Procofa.Infrastructure\Procofa.Infrastructure.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
   </ItemGroup>
 
 </Project>
