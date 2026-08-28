@@ -6,17 +6,12 @@ using IdentityPasswordVerificationResult = Microsoft.AspNetCore.Identity.Passwor
 
 namespace Procofa.Infrastructure.Security;
 
-/// <summary>
-/// Implementación de <see cref="IPasswordHasher"/> vía
-/// <see cref="PasswordHasher{TUser}"/> de ASP.NET Core Identity (Instrucción
-/// 04, sección "LOGIN" paso 7: "Validar contraseña usando
-/// PasswordHasher&lt;TUser&gt; o abstracción equivalente de Microsoft").
-/// <see cref="Domain.Entities.Identity.User"/> se usa directamente como
-/// <c>TUser</c> — <c>PasswordHasher&lt;TUser&gt;</c> no exige que el tipo
-/// implemente ninguna interfaz, así que no hace falta un wrapper/DTO
-/// adicional. El algoritmo (PBKDF2, parámetros por defecto de Identity) y
-/// sus iteraciones son responsabilidad exclusiva de este paquete — Application
-/// nunca los conoce.
+/// <summary> Implementación de <see cref="IPasswordHasher"/> vía <see
+/// cref="PasswordHasher{TUser}"/> de ASP.NET Core Identity. <see
+/// cref="Domain.Entities.Identity.User"/> se usa directamente como <c>TUser</c> —
+/// <c>PasswordHasher&lt;TUser&gt;</c> no exige que el tipo implemente ninguna interfaz, así que no
+/// hace falta un wrapper/DTO adicional. El algoritmo (PBKDF2, parámetros por defecto de Identity) y
+/// sus iteraciones son responsabilidad exclusiva de este paquete — Application nunca los conoce.
 /// </summary>
 public sealed class PasswordHasherAdapter : IPasswordHasher
 {

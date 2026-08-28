@@ -5,12 +5,10 @@ using Procofa.Application.UseCases.Auth.Login;
 namespace Procofa.Api.Endpoints;
 
 /// <summary>
-/// Endpoints de Auth (Instrucción 04, alcance estricto: solo login). Sin
-/// lógica de negocio aquí — el endpoint solo (a) valida la forma del
-/// request, (b) traduce HttpContext -> <see cref="LoginCommand"/>, (c)
-/// traduce <see cref="LoginResult"/> -> respuesta HTTP. Toda decisión real
-/// (credenciales, lockout, roles) vive en <see cref="LoginCommandHandler"/>.
-/// </summary>
+/// Endpoints de Auth. Sin lógica de negocio aquí — el endpoint solo (a) valida la forma del
+/// request, (b) traduce HttpContext -> <see cref="LoginCommand"/>, (c) traduce <see
+/// cref="LoginResult"/> -> respuesta HTTP. Toda decisión real (credenciales, lockout, roles) vive
+/// en <see cref="LoginCommandHandler"/>. </summary>
 public static class AuthEndpoints
 {
     public static void MapAuthEndpoints(this WebApplication app)
@@ -40,9 +38,9 @@ public static class AuthEndpoints
 
         if (!result.IsSuccess)
         {
-            // Instrucción 04: las 3 causas de fallo (usuario inexistente, password
-            // incorrecto, inactivo, bloqueado) SIEMPRE producen la misma respuesta —
-            // "no revelar si el email existe" / "respuesta uniforme para credenciales inválidas".
+            // Las 3 causas de fallo (usuario inexistente, password incorrecto, inactivo, bloqueado)
+            // SIEMPRE producen la misma respuesta — "no revelar si el email existe" / "respuesta
+            // uniforme para credenciales inválidas".
             return TypedResults.Problem(
                 statusCode: StatusCodes.Status401Unauthorized,
                 title: "Credenciales inválidas.",

@@ -84,17 +84,15 @@ public sealed class User
     /// </summary>
     public static string Normalize(string email) => email.Trim().ToUpperInvariant();
 
-    /// <summary>Instrucción 04: true si <see cref="LockedUntilUtc"/> sigue vigente respecto de <paramref name="nowUtc"/>.</summary>
+    /// <summary>true si <see cref="LockedUntilUtc"/> sigue vigente respecto de <paramref
+    /// name="nowUtc"/>.</summary>
     public bool IsLockedOut(DateTime nowUtc) => LockedUntilUtc.HasValue && LockedUntilUtc.Value > nowUtc;
 
-    /// <summary>
-    /// Instrucción 04, flujo de login paso 8: incrementa
-    /// <see cref="FailedLoginAttempts"/> y aplica lockout
-    /// (<see cref="LockedUntilUtc"/> = <paramref name="nowUtc"/> + <paramref name="lockoutDuration"/>)
-    /// cuando se alcanza <paramref name="maxFailedAttempts"/>. La política
-    /// (umbral/duración) es responsabilidad de configuración — este método
-    /// solo aplica los valores ya resueltos, sin conocer de dónde vienen.
-    /// </summary>
+    /// <summary>flujo de login paso 8: incrementa <see cref="FailedLoginAttempts"/> y aplica
+    /// lockout (<see cref="LockedUntilUtc"/> = <paramref name="nowUtc"/> + <paramref
+    /// name="lockoutDuration"/>) cuando se alcanza <paramref name="maxFailedAttempts"/>. La
+    /// política (umbral/duración) es responsabilidad de configuración — este método solo aplica los
+    /// valores ya resueltos, sin conocer de dónde vienen. </summary>
     public void RegisterFailedLogin(int maxFailedAttempts, TimeSpan lockoutDuration, DateTime nowUtc)
     {
         FailedLoginAttempts += 1;
@@ -105,7 +103,8 @@ public sealed class User
         }
     }
 
-    /// <summary>Instrucción 04, flujo de login paso 9: resetea intentos/bloqueo y actualiza el último login.</summary>
+    /// <summary>flujo de login paso 9: resetea intentos/bloqueo y actualiza el último
+    /// login.</summary>
     public void RegisterSuccessfulLogin(DateTime nowUtc)
     {
         FailedLoginAttempts = 0;
@@ -127,26 +126,23 @@ public sealed class User
     /// <summary>
     /// Asigna un rol de sistema al usuario (colección owned <see cref="Roles"/>,
     /// tabla <c>user_roles</c>). Usado por el bootstrap del primer ADMIN y por
-    /// la creación de usuarios (Instrucción 05).
-    /// </summary>
+    /// la creación de usuarios. </summary>
     public void AddRole(UserRole userRole)
     {
         _roles.Add(userRole);
     }
 
-    /// <summary>Instrucción 05: quita un rol puntual (colección owned <see cref="Roles"/>). No-op si el usuario no lo tiene.</summary>
+    /// <summary>quita un rol puntual (colección owned <see cref="Roles"/>). No-op si el usuario no
+    /// lo tiene.</summary>
     public void RemoveRole(Guid roleId)
     {
         _roles.RemoveAll(r => r.RoleId == roleId);
     }
 
-    /// <summary>
-    /// Instrucción 05, <c>PUT /api/users/{id}/roles</c>: reemplaza el
-    /// conjunto completo de roles. EF detecta la diferencia (altas/bajas en
-    /// <c>user_roles</c>) al mutar la colección owned en memoria — el
-    /// llamador es responsable de construir <paramref name="newRoles"/> ya
-    /// resueltos contra el catálogo real (nunca códigos inventados).
-    /// </summary>
+    /// <summary><c>PUT /api/users/{id}/roles</c>: reemplaza el conjunto completo de roles. EF
+    /// detecta la diferencia (altas/bajas en <c>user_roles</c>) al mutar la colección owned en
+    /// memoria — el llamador es responsable de construir <paramref name="newRoles"/> ya resueltos
+    /// contra el catálogo real (nunca códigos inventados). </summary>
     public void ReplaceRoles(IEnumerable<UserRole> newRoles)
     {
         _roles.Clear();
@@ -154,43 +150,39 @@ public sealed class User
     }
 
     /// <summary>
-    /// Instrucción 05, sección "CREAR USUARIO": el usuario creado por un
-    /// ADMIN siempre debe cambiar su contraseña temporal en el primer login.
-    /// Método explícito en vez de un setter público — <see cref="MustChangePassword"/>
-    /// nunca se asigna directamente desde fuera del dominio.
-    /// </summary>
+    /// el usuario creado por un ADMIN siempre debe cambiar su contraseña temporal en el primer
+    /// login. Método explícito en vez de un setter público — <see cref="MustChangePassword"/> nunca
+    /// se asigna directamente desde fuera del dominio. </summary>
     public void RequirePasswordChange()
     {
         MustChangePassword = true;
     }
 
-    /// <summary>Instrucción 05, <c>PATCH /api/users/{id}/status</c>: reactiva la cuenta (no borra ni resetea nada más).</summary>
+    /// <summary><c>PATCH /api/users/{id}/status</c>: reactiva la cuenta (no borra ni resetea nada
+    /// más).</summary>
     public void Activate()
     {
         IsActive = true;
     }
 
-    /// <summary>Instrucción 05, <c>PATCH /api/users/{id}/status</c>: desactiva la cuenta (soft — nunca hard delete). La regla "un ADMIN no puede desactivarse a sí mismo" es responsabilidad del caso de uso, no de esta entidad.</summary>
+    /// <summary><c>PATCH /api/users/{id}/status</c>: desactiva la cuenta (soft — nunca hard
+    /// delete). La regla "un ADMIN no puede desactivarse a sí mismo" es responsabilidad del caso de
+    /// uso, no de esta entidad.</summary>
     public void Deactivate()
     {
         IsActive = false;
     }
 
     /// <summary>
-    /// Instrucción 05, sección "REGLAS PARA CLIENTE": concede acceso a un
-    /// cliente concreto (colección owned <see cref="ClientAccess"/>). Tener
-    /// el rol de sistema CLIENTE no otorga acceso implícito — solo esta
-    /// colección lo hace.
-    /// </summary>
+    /// concede acceso a un cliente concreto (colección owned <see cref="ClientAccess"/>). Tener el
+    /// rol de sistema CLIENTE no otorga acceso implícito — solo esta colección lo hace. </summary>
     public void GrantClientAccess(UserClientAccess access)
     {
         _clientAccess.Add(access);
     }
 
-    /// <summary>
-    /// Instrucción 05, <c>PUT /api/users/{id}/client-access</c>: reemplaza el
-    /// conjunto completo de accesos a clientes. Mismo mecanismo de detección
-    /// de cambios que <see cref="ReplaceRoles"/>.
+    /// <summary><c>PUT /api/users/{id}/client-access</c>: reemplaza el conjunto completo de accesos
+    /// a clientes. Mismo mecanismo de detección de cambios que <see cref="ReplaceRoles"/>.
     /// </summary>
     public void ReplaceClientAccess(IEnumerable<UserClientAccess> newAccess)
     {
@@ -199,9 +191,8 @@ public sealed class User
     }
 
     /// <summary>
-    /// Instrucción 05, sección "REGLAS PARA CLIENTE": "si durante actualización
-    /// se quita el rol CLIENTE, eliminar sus registros de user_client_access".
-    /// </summary>
+    /// "si durante actualización se quita el rol CLIENTE, eliminar sus registros de
+    /// user_client_access". </summary>
     public void ClearClientAccess()
     {
         _clientAccess.Clear();

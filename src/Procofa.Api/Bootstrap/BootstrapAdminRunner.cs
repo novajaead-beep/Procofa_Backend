@@ -8,23 +8,14 @@ namespace Procofa.Api.Bootstrap;
 
 /// <summary>
 /// Host mode explícito para el bootstrap one-shot del primer ADMIN
-/// (Instrucción 04, sección "BOOTSTRAP PRIMER ADMIN"). Se invoca así,
-/// NUNCA vía HTTP:
-///
-/// <code>
-/// PROCOFA_BOOTSTRAP_ADMIN_EMAIL=admin@procofa.com \
+/// . Se invoca así, NUNCA vía HTTP: <code> PROCOFA_BOOTSTRAP_ADMIN_EMAIL=admin@procofa.com \
 /// PROCOFA_BOOTSTRAP_ADMIN_PASSWORD='una-contraseña-segura-de-verdad' \
-/// PROCOFA_BOOTSTRAP_ADMIN_FIRST_NAME=Admin \
-/// PROCOFA_BOOTSTRAP_ADMIN_LAST_NAME=PROCOFA \
-/// dotnet run --project src/Procofa.Api -- bootstrap-admin
-/// </code>
-///
-/// No hardcodea contraseña alguna, no la persiste en texto plano (delega en
-/// <c>IPasswordHasher</c>), no requiere Jwt/AccessToken configurado (el caso
-/// de uso no los usa), y es idempotente: una segunda ejecución detecta que
-/// ya existe un ADMIN y termina con éxito sin duplicar (ver
-/// <see cref="BootstrapAdminCommandHandler"/>).
-/// </summary>
+/// PROCOFA_BOOTSTRAP_ADMIN_FIRST_NAME=Admin \ PROCOFA_BOOTSTRAP_ADMIN_LAST_NAME=PROCOFA \ dotnet
+/// run --project src/Procofa.Api -- bootstrap-admin </code> No hardcodea contraseña alguna, no la
+/// persiste en texto plano (delega en <c>IPasswordHasher</c>), no requiere Jwt/AccessToken
+/// configurado (el caso de uso no los usa), y es idempotente: una segunda ejecución detecta que ya
+/// existe un ADMIN y termina con éxito sin duplicar (ver <see
+/// cref="BootstrapAdminCommandHandler"/>). </summary>
 internal static class BootstrapAdminRunner
 {
     private const string EmailVariable = "PROCOFA_BOOTSTRAP_ADMIN_EMAIL";
@@ -54,15 +45,13 @@ internal static class BootstrapAdminRunner
 
         var hostBuilder = Host.CreateApplicationBuilder();
 
-        // Instrucción 04.2: ya no se captura la connection string aquí —
-        // AddInfrastructure() la resuelve de forma diferida desde
-        // IConfiguration (registrada automáticamente por Host.CreateApplicationBuilder
-        // en hostBuilder.Services) en el momento en que ProcofaDbContext se
-        // construye, no antes. authSettings SÍ se registra como instancia ya
-        // materializada aquí a propósito — este host mode nunca pasa por
-        // WebApplicationFactory, así que no hay override de configuración
-        // tardío que perder; AddAuth() solo exige que InfrastructureAuthSettings
-        // esté disponible en el contenedor cuando se resuelva.
+        // Ya no se captura la connection string aquí — AddInfrastructure() la resuelve de forma
+        // diferida desde IConfiguration (registrada automáticamente por
+        // Host.CreateApplicationBuilder en hostBuilder.Services) en el momento en que
+        // ProcofaDbContext se construye, no antes. authSettings SÍ se registra como instancia ya
+        // materializada aquí a propósito — este host mode nunca pasa por WebApplicationFactory, así
+        // que no hay override de configuración tardío que perder; AddAuth() solo exige que
+        // InfrastructureAuthSettings esté disponible en el contenedor cuando se resuelva.
         var authSettings = InfrastructureAuthSettingsFactory.Create(hostBuilder.Configuration);
 
         hostBuilder.Services.AddSingleton(authSettings);

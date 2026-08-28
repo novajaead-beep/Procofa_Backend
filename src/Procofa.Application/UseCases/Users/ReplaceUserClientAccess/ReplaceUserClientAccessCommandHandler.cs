@@ -7,7 +7,7 @@ using Procofa.Domain.Entities.Identity.ValueObjects;
 
 namespace Procofa.Application.UseCases.Users.ReplaceUserClientAccess;
 
-/// <summary>Caso de uso <c>PUT /api/users/{userId}/client-access</c> (Instrucción 05).</summary>
+/// <summary>Caso de uso <c>PUT /api/users/{userId}/client-access</c>.</summary>
 public sealed class ReplaceUserClientAccessCommandHandler(
     ITenantContext tenantContext,
     ITenantUnitOfWork unitOfWork,

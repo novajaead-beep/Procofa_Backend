@@ -8,14 +8,12 @@ namespace Procofa.Application.Abstractions.Identity;
 public sealed record AccessToken(string Value, DateTime ExpiresAtUtc);
 
 /// <summary>
-/// Puerto de emisión de JWT de acceso (Instrucción 04). Claims mínimos que la
-/// implementación debe incluir: <c>sub</c> (user id), <c>tenant_id</c>,
-/// <c>email</c>, <c>roles</c> (uno o más claims con los códigos exactos de
-/// <see cref="Procofa.Domain.Entities.Identity.Role.Code"/> del usuario — nunca
-/// aceptados desde el request, siempre resueltos server-side). Issuer,
-/// audience, signing key y minutos de expiración son configuración de
-/// Infrastructure (appsettings/environment), no de este puerto.
-/// </summary>
+/// Puerto de emisión de JWT de acceso. Claims mínimos que la implementación debe incluir:
+/// <c>sub</c> (user id), <c>tenant_id</c>, <c>email</c>, <c>roles</c> (uno o más claims con los
+/// códigos exactos de <see cref="Procofa.Domain.Entities.Identity.Role.Code"/> del usuario — nunca
+/// aceptados desde el request, siempre resueltos server-side). Issuer, audience, signing key y
+/// minutos de expiración son configuración de Infrastructure (appsettings/environment), no de este
+/// puerto. </summary>
 public interface IAccessTokenGenerator
 {
     AccessToken GenerateAccessToken(

@@ -6,12 +6,10 @@ using Procofa.Domain.Entities.Identity;
 namespace Procofa.Application.Tests.TestDoubles;
 
 /// <summary>
-/// Fakes deterministas para los tests de Auth (Instrucción 04). No se usa
-/// ninguna librería de mocking — Procofa.Application.Tests solo referencia
-/// xunit (Directory.Packages.props, política conservadora de Foundation) —
-/// así que cada puerto tiene aquí una implementación en memoria mínima,
-/// suficiente para observar el comportamiento de los handlers sin BD real.
-/// </summary>
+/// Fakes deterministas para los tests de Auth. No se usa ninguna librería de mocking —
+/// Procofa.Application.Tests solo referencia xunit (Directory.Packages.props, política conservadora
+/// de Foundation) — así que cada puerto tiene aquí una implementación en memoria mínima, suficiente
+/// para observar el comportamiento de los handlers sin BD real. </summary>
 internal static class InMemoryRoleCatalog
 {
     public static readonly Role Admin = new(Guid.NewGuid(), "ADMIN", "Administrador", null);
@@ -20,7 +18,7 @@ internal static class InMemoryRoleCatalog
     public static readonly Role Cliente = new(Guid.NewGuid(), "CLIENTE", "Cliente", null);
     public static readonly Role Consultor = new(Guid.NewGuid(), "CONSULTOR", "Consultor", null);
 
-    // Instrucción 05: catálogo completo de los 5 roles válidos del módulo de usuarios.
+    // catálogo completo de los 5 roles válidos del módulo de usuarios.
     public static readonly IReadOnlyList<Role> All = [Admin, AuditorLider, AuditorApoyo, Cliente, Consultor];
 }
 
@@ -72,7 +70,7 @@ internal sealed class FakeUserRepository : IUserRepository
         return Task.FromResult(exists);
     }
 
-    // ---- Instrucción 05: gestión de usuarios ----
+    // ---- gestión de usuarios ----
 
     public Task<bool> ExistsByNormalizedEmailAsync(
         Guid tenantId, string normalizedEmail, CancellationToken cancellationToken) =>

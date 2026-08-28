@@ -5,7 +5,7 @@ using Procofa.Domain.Entities.Identity.ValueObjects;
 
 namespace Procofa.Application.Tests.Users;
 
-/// <summary>Tests de <see cref="ReplaceUserRolesCommandHandler"/> (Instrucción 05, sección "ASIGNAR ROLES").</summary>
+/// <summary>Tests de <see cref="ReplaceUserRolesCommandHandler"/>.</summary>
 public sealed class ReplaceUserRolesCommandHandlerTests
 {
     private static readonly Guid TenantId = Guid.Parse("00000000-0000-0000-0000-000000000001");

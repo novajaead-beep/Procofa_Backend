@@ -6,36 +6,22 @@ using Testcontainers.PostgreSql;
 
 namespace Procofa.IntegrationTests.Fixtures;
 
-/// <summary>
-/// Fixture compartida (xUnit <see cref="ICollectionFixture{TFixture}"/>) —
-/// UN solo contenedor PostgreSQL 18 desechable para TODA la suite de
-/// integration tests (Instrucción 03: "PostgreSQL 18 desechable vía
-/// Testcontainers — decisión definitiva, nunca PostgreSQL 16"). Levanta el
+/// <summary> Fixture compartida (xUnit <see cref="ICollectionFixture{TFixture}"/>) — UN solo
+/// contenedor PostgreSQL 18 desechable para TODA la suite de integration tests. Levanta el
 /// contenedor una vez y carga
-/// <c>db/baseline/v2.1/{001_schema.sql,002_security.sql,003_seed_catalogs.sql}</c>
-/// en ese orden — el MISMO bootstrap reproducible que usaría cualquier
-/// desarrollador local (ver <c>db/baseline/v2.1/README.md</c>).
-///
-/// Expone dos connection strings: <see cref="SuperuserConnectionString"/>
-/// (SOLO para bootstrap/semillas de datos de prueba entre tests — nunca
-/// para las aserciones de RLS/ACL en sí) y <see cref="AppConnectionString"/>
-/// (autenticada como <c>procofa_app</c> — la que deben usar TODAS las
-/// queries que ejercen RLS/ACL de verdad: Instrucción 03, sección 27,
-/// "las pruebas de RLS corren como procofa_app, nunca como superusuario").
-///
-/// Aislamiento entre tests: cada test crea su PROPIO tenant (GUID nuevo vía
-/// <see cref="CreateTenantAsync"/>) en lugar de depender de un
-/// TRUNCATE/reset global — como todas las tablas relevantes son
-/// tenant-scoped y RLS es fail-closed, un tenant nuevo por test garantiza
-/// aislamiento sin importar el orden de ejecución de xUnit ni requerir
-/// enumerar las 48 tablas en orden de dependencia para un TRUNCATE seguro.
-///
-/// NO ejecutada por Claude en este sandbox: Docker/Docker Hub no son
-/// alcanzables (egress allowlist) ni en el sandbox cloud ni en la VM del
-/// bridge del usuario — ver sección J/L del reporte de Instrucción 03.
-/// Escrita para compilar y correr tal cual el día que alguien la ejecute
-/// con Docker disponible.
-/// </summary>
+/// <c>db/baseline/v2.1/{001_schema.sql,002_security.sql,003_seed_catalogs.sql}</c> en ese orden —
+/// el MISMO bootstrap reproducible que usaría cualquier desarrollador local (ver
+/// <c>db/baseline/v2.1/README.md</c>). Expone dos connection strings: <see
+/// cref="SuperuserConnectionString"/> (SOLO para bootstrap/semillas de datos de prueba entre tests
+/// — nunca para las aserciones de RLS/ACL en sí) y <see cref="AppConnectionString"/> (autenticada
+/// como <c>procofa_app</c> — la que deben usar TODAS las queries que ejercen RLS/ACL de verdad:
+/// las pruebas de RLS corren como <c>procofa_app</c>, nunca como superusuario).
+/// Aislamiento entre tests: cada test crea su PROPIO tenant (GUID nuevo vía <see
+/// cref="CreateTenantAsync"/>) en lugar de depender de un TRUNCATE/reset global — como todas las
+/// tablas relevantes son tenant-scoped y RLS es fail-closed, un tenant nuevo por test garantiza
+/// aislamiento sin importar el orden de ejecución de xUnit ni requerir enumerar las 48 tablas en
+/// orden de dependencia para un TRUNCATE seguro. Escrita para compilar y correr tal cual el día que
+/// alguien la ejecute con Docker disponible. </summary>
 public sealed class PostgresBaselineFixture : IAsyncLifetime
 {
     private const string TestDatabaseName = "procofa_test";
@@ -175,9 +161,8 @@ public sealed class PostgresBaselineFixture : IAsyncLifetime
     /// Crea un usuario con un hash de contraseña REAL (a diferencia de
     /// <see cref="CreateUserAsync"/>, que usa un placeholder) y le asigna los
     /// roles indicados por código — usado por
-    /// <c>Procofa.IntegrationTests.Auth</c> (Instrucción 04) para tener un
-    /// usuario que efectivamente pueda hacer login/ser encontrado con rol.
-    /// </summary>
+    /// <c>Procofa.IntegrationTests.Auth</c> para tener un usuario que efectivamente pueda hacer
+    /// login/ser encontrado con rol. </summary>
     public async Task<Guid> CreateUserWithPasswordAsync(
         Guid tenantId, string email, string passwordHash, params string[] roleCodes)
     {
@@ -326,12 +311,10 @@ public sealed class PostgresBaselineFixture : IAsyncLifetime
     /// <c>AuditCloseValidationTests</c> (controla <paramref name="complianceStatusCode"/>
     /// para simular criterio evaluado/sin evaluar) y <c>ConcurrencyTokenTests</c>
     /// (necesita una fila real con <c>lock_version</c> para el UPDATE
-    /// concurrente vía EF). Fidelidad sobre atajos (Instrucción 03): NO se usa
-    /// ninguna tabla intermedia falsa, se recorre la cadena de FKs real completa.
-    /// <c>checklists.program_id</c>/<c>profile_id</c> usan catálogos fijos
-    /// ('OEA'/'MAQUILA') — suficientes para satisfacer las FKs, no relevantes
-    /// para lo que el test valida.
-    /// </summary>
+    /// concurrente vía EF). Fidelidad sobre atajos: NO se usa ninguna tabla intermedia falsa, se
+    /// recorre la cadena de FKs real completa. <c>checklists.program_id</c>/<c>profile_id</c> usan
+    /// catálogos fijos ('OEA'/'MAQUILA') — suficientes para satisfacer las FKs, no relevantes para
+    /// lo que el test valida. </summary>
     public async Task<Guid> CreateAuditCriterionAsync(
         Guid tenantId,
         Guid auditId,
@@ -442,8 +425,7 @@ public sealed class PostgresBaselineFixture : IAsyncLifetime
     /// usada por <c>AppendOnlyAndImmutabilityTests</c> para crear directamente
     /// un reporte en <c>FINAL</c> (se salta el flujo normal DRAFT→FINAL a
     /// propósito: el test ejercita el trigger de inmutabilidad de base de
-    /// datos, no el flujo de negocio, que Instrucción 03 excluye).
-    /// </summary>
+    /// datos, no el flujo de negocio de generación de reportes). </summary>
     public async Task<Guid> CreateAuditReportAsync(
         Guid tenantId,
         Guid auditId,

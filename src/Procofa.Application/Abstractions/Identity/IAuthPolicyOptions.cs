@@ -1,12 +1,9 @@
 namespace Procofa.Application.Abstractions.Identity;
 
 /// <summary>
-/// Política de autenticación resuelta desde configuración (Instrucción 04,
-/// secciones "JWT" y "REFRESH TOKEN": "Configurable desde
-/// appsettings/environment"). Application consume solo estos valores ya
-/// resueltos — nunca lee <c>IConfiguration</c> directamente (se mantiene sin
-/// dependencias de Infrastructure/Api).
-/// </summary>
+/// Política de autenticación resuelta desde configuración. Application consume solo estos valores
+/// ya resueltos — nunca lee <c>IConfiguration</c> directamente (se mantiene sin dependencias de
+/// Infrastructure/Api). </summary>
 public interface IAuthPolicyOptions
 {
     /// <summary>Intentos fallidos consecutivos antes de aplicar lockout.</summary>

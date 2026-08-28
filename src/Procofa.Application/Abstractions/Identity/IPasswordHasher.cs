@@ -1,13 +1,10 @@
 namespace Procofa.Application.Abstractions.Identity;
 
 /// <summary>
-/// Resultado de verificar una contraseña contra un hash (Instrucción 04).
-/// Espejo propio, libre de Infrastructure, del resultado que produce
-/// <c>Microsoft.AspNetCore.Identity.PasswordHasher&lt;TUser&gt;</c> — la
-/// implementación real vive en Infrastructure (<c>PasswordHasherAdapter</c>)
-/// y mapea 1 a 1 hacia este tipo, para que Application nunca referencie el
-/// paquete de Identity directamente.
-/// </summary>
+/// Resultado de verificar una contraseña contra un hash. Espejo propio, libre de Infrastructure,
+/// del resultado que produce <c>Microsoft.AspNetCore.Identity.PasswordHasher&lt;TUser&gt;</c> — la
+/// implementación real vive en Infrastructure (<c>PasswordHasherAdapter</c>) y mapea 1 a 1 hacia
+/// este tipo, para que Application nunca referencie el paquete de Identity directamente. </summary>
 public enum PasswordVerificationResult
 {
     /// <summary>La contraseña no coincide con el hash.</summary>
@@ -26,10 +23,8 @@ public enum PasswordVerificationResult
 }
 
 /// <summary>
-/// Puerto de hashing de contraseñas (Instrucción 04, sección "ARQUITECTURA":
-/// "Infrastructure implementa persistencia, hashing/JWT si corresponde").
-/// Application orquesta el caso de uso sin conocer el algoritmo concreto.
-/// </summary>
+/// Puerto de hashing de contraseñas. Application orquesta el caso de uso sin conocer el algoritmo
+/// concreto. </summary>
 public interface IPasswordHasher
 {
     /// <summary>Genera un nuevo hash a partir de una contraseña en texto plano. Nunca loggear el resultado ni el input.</summary>

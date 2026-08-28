@@ -4,10 +4,8 @@ using Procofa.Infrastructure.Security;
 namespace Procofa.Infrastructure.Tests;
 
 /// <summary>
-/// Tests de <see cref="PasswordHasherAdapter"/> (Instrucción 04, sección
-/// "TESTS MÍNIMOS" → Infrastructure: "password hash válido/inválido"). No
-/// requiere BD — ejercita <c>PasswordHasher&lt;TUser&gt;</c> de ASP.NET Core
-/// Identity a través del adapter real.
+/// Tests de <see cref="PasswordHasherAdapter"/>. No requiere BD — ejercita
+/// <c>PasswordHasher&lt;TUser&gt;</c> de ASP.NET Core Identity a través del adapter real.
 /// </summary>
 public sealed class PasswordHasherAdapterTests
 {

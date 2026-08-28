@@ -4,19 +4,15 @@ namespace Procofa.Api.Configuration;
 
 /// <summary>
 /// Traduce <see cref="IConfiguration"/> (appsettings/environment/user-secrets)
-/// a <see cref="InfrastructureAuthSettings"/> (Instrucción 04). Único punto
-/// del proceso que conoce las claves de configuración de Auth — compartido
-/// por el arranque web normal (<c>Program.cs</c>) y por el host mode
-/// <c>bootstrap-admin</c> (<see cref="Procofa.Api.Bootstrap.BootstrapAdminRunner"/>),
-/// para no duplicar la forma de la configuración en dos lugares.
-///
-/// Nota: NO valida aquí que <c>Jwt:SigningKey</c> tenga longitud suficiente
-/// ni que los valores numéricos sean positivos — esa validación de dominio
-/// vive en los constructores de <c>JwtAccessTokenGenerator</c> y
-/// <c>AuthPolicyOptionsAdapter</c> (Infrastructure), que son quienes conocen
-/// las reglas reales (256 bits mínimo para HS256, etc.). Esta clase solo
-/// resuelve strings/ints crudos desde configuración con sus defaults.
-/// </summary>
+/// a <see cref="InfrastructureAuthSettings"/>. Único punto del proceso que conoce las claves de
+/// configuración de Auth — compartido por el arranque web normal (<c>Program.cs</c>) y por el host
+/// mode <c>bootstrap-admin</c> (<see cref="Procofa.Api.Bootstrap.BootstrapAdminRunner"/>), para no
+/// duplicar la forma de la configuración en dos lugares. Nota: NO valida aquí que
+/// <c>Jwt:SigningKey</c> tenga longitud suficiente ni que los valores numéricos sean positivos —
+/// esa validación de dominio vive en los constructores de <c>JwtAccessTokenGenerator</c> y
+/// <c>AuthPolicyOptionsAdapter</c> (Infrastructure), que son quienes conocen las reglas reales (256
+/// bits mínimo para HS256, etc.). Esta clase solo resuelve strings/ints crudos desde configuración
+/// con sus defaults. </summary>
 internal static class InfrastructureAuthSettingsFactory
 {
     private const string DefaultProcofaTenantId = "00000000-0000-0000-0000-000000000001";

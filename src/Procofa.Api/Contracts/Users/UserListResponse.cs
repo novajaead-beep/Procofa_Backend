@@ -12,7 +12,7 @@ public sealed record UserListItemResponse(
     IReadOnlyCollection<string> Roles,
     DateTime CreatedAtUtc);
 
-/// <summary>Respuesta de <c>GET /api/users</c> (Instrucción 05, sección 3.1).</summary>
+/// <summary>Respuesta de <c>GET /api/users</c>.</summary>
 public sealed record UserListResponse(
     IReadOnlyCollection<UserListItemResponse> Items,
     int Page,

@@ -15,12 +15,10 @@ using Procofa.IntegrationTests.Fixtures;
 namespace Procofa.IntegrationTests.Users;
 
 /// <summary>
-/// Ensambla los casos de uso de gestión de usuarios (Instrucción 05) con las
-/// implementaciones REALES de Infrastructure contra el contenedor Postgres
-/// desechable — mismo patrón que <see cref="AuthHandlerFactory"/>: siempre
-/// como <c>procofa_app</c> (nunca superusuario) para ejercer RLS/ACL de
-/// verdad.
-/// </summary>
+/// Ensambla los casos de uso de gestión de usuarios con las implementaciones REALES de
+/// Infrastructure contra el contenedor Postgres desechable — mismo patrón que <see
+/// cref="AuthHandlerFactory"/>: siempre como <c>procofa_app</c> (nunca superusuario) para ejercer
+/// RLS/ACL de verdad. </summary>
 public static class UsersHandlerFactory
 {
     public static (CreateUserCommandHandler Handler, ProcofaDbContext DbContext) CreateCreateUserHandler(

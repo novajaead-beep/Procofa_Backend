@@ -6,7 +6,7 @@ using Procofa.Domain.Entities.Identity.ValueObjects;
 
 namespace Procofa.Application.Tests.Users;
 
-/// <summary>Tests de <see cref="ReplaceUserClientAccessCommandHandler"/> (Instrucción 05, sección "ACCESO A CLIENTES").</summary>
+/// <summary>Tests de <see cref="ReplaceUserClientAccessCommandHandler"/>.</summary>
 public sealed class ReplaceUserClientAccessCommandHandlerTests
 {
     private static readonly Guid TenantId = Guid.Parse("00000000-0000-0000-0000-000000000001");

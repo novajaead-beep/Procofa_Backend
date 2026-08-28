@@ -3,10 +3,9 @@ using Procofa.Application.Abstractions.Identity;
 namespace Procofa.Application.UseCases.Auth.Login;
 
 /// <summary>
-/// Resultado de <see cref="LoginCommandHandler"/> (Instrucción 04). Construido
-/// únicamente vía <see cref="Success"/>/<see cref="Failure"/> — nunca con un
-/// constructor público — para que sea imposible representar un estado
-/// inconsistente (ej. éxito sin token, o fallo con token).
+/// Resultado de <see cref="LoginCommandHandler"/>. Construido únicamente vía <see
+/// cref="Success"/>/<see cref="Failure"/> — nunca con un constructor público — para que sea
+/// imposible representar un estado inconsistente (ej. éxito sin token, o fallo con token).
 /// </summary>
 public sealed class LoginResult
 {

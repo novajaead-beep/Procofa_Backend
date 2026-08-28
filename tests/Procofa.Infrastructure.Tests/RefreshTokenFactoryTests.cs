@@ -5,11 +5,9 @@ using Procofa.Infrastructure.Security;
 namespace Procofa.Infrastructure.Tests;
 
 /// <summary>
-/// Tests de <see cref="RefreshTokenFactory"/> (Instrucción 04, sección
-/// "REFRESH TOKEN"): valor crudo único por llamada, hash SHA-256
-/// determinista sobre ese valor, y (indirectamente, ver
-/// <c>Procofa.IntegrationTests</c>) que solo el hash se persiste.
-/// </summary>
+/// Tests de <see cref="RefreshTokenFactory"/>: valor crudo único por llamada, hash SHA-256
+/// determinista sobre ese valor, y (indirectamente, ver <c>Procofa.IntegrationTests</c>) que solo
+/// el hash se persiste. </summary>
 public sealed class RefreshTokenFactoryTests
 {
     [Fact]

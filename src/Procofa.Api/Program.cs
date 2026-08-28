@@ -21,10 +21,9 @@ using Procofa.Application.UseCases.Users.ReplaceUserClientAccess;
 using Procofa.Application.UseCases.Users.ReplaceUserRoles;
 using Procofa.Infrastructure;
 
-// Instrucción 04, sección "BOOTSTRAP PRIMER ADMIN": host mode explícito,
-// NUNCA un endpoint HTTP. Debe interceptarse ANTES de WebApplication.CreateBuilder
-// para no levantar Kestrel/el pipeline HTTP completo por un comando de un solo
-// disparo — ver BootstrapAdminRunner para el comando exacto.
+// Host mode explícito, NUNCA un endpoint HTTP. Debe interceptarse ANTES de
+// WebApplication.CreateBuilder para no levantar Kestrel/el pipeline HTTP completo por un comando de
+// un solo disparo — ver BootstrapAdminRunner para el comando exacto.
 if (args.Length > 0 && string.Equals(args[0], "bootstrap-admin", StringComparison.OrdinalIgnoreCase))
 {
     return await BootstrapAdminRunner.RunAsync();
@@ -35,29 +34,26 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddHealthChecks();
 builder.Services.AddProblemDetails();
 
-// Instrucción 04.2 — CERRAR AUTH: ya NO se lee "ConnectionStrings:ProcofaDb"
-// aquí. AddInfrastructure() registra ProcofaDbContext con el delegate
-// (sp, options) => ... de AddDbContext, que resuelve IConfiguration desde el
-// IServiceProvider recién en la primera resolución real del DbContext (por
+// CERRAR AUTH: ya NO se lee "ConnectionStrings:ProcofaDb" aquí. AddInfrastructure() registra
+// ProcofaDbContext con el delegate (sp, options) => ... de AddDbContext, que resuelve
+// IConfiguration desde el IServiceProvider recién en la primera resolución real del DbContext (por
 // scope/request) — no en este punto, antes de builder.Build(). Ver
-// Procofa.Infrastructure/DependencyInjection.cs para el detalle completo.
-// Ausencia de "ConnectionStrings:ProcofaDb" NO impide arrancar: AddDbContext
-// sigue siendo perezoso y "/health" no toca ProcofaDbContext (Instrucción 03:
-// "/health debe funcionar sin conectarse a la BD").
+// Procofa.Infrastructure/DependencyInjection.cs para el detalle completo. Ausencia de
+// "ConnectionStrings:ProcofaDb" NO impide arrancar: AddDbContext sigue siendo perezoso y "/health"
+// no toca ProcofaDbContext.
 builder.Services.AddSingleton(sp =>
     InfrastructureAuthSettingsFactory.Create(
         sp.GetRequiredService<IConfiguration>()));
 
 builder.Services.AddInfrastructure();
 
-// Instrucción 04: primer caso de uso real de Application — sin
-// AddApplication(IServiceCollection) propio todavía (Application sigue sin
-// depender de Microsoft.Extensions.DependencyInjection.Abstractions), se
-// registra aquí directamente en el Composition Root.
+// Sin AddApplication(IServiceCollection) propio todavía (Application sigue sin depender de
+// Microsoft.Extensions.DependencyInjection.Abstractions), se registra aquí directamente en el
+// Composition Root.
 builder.Services.AddScoped<LoginCommandHandler>();
 
-// Instrucción 05: casos de uso de gestión de usuarios — mismo Composition
-// Root, mismo criterio (registro directo, sin contenedor DI en Application).
+// Casos de uso de gestión de usuarios — mismo Composition Root, mismo criterio (registro directo,
+// sin contenedor DI en Application).
 builder.Services.AddScoped<ListUsersQueryHandler>();
 builder.Services.AddScoped<GetUserQueryHandler>();
 builder.Services.AddScoped<CreateUserCommandHandler>();
@@ -65,20 +61,17 @@ builder.Services.AddScoped<ChangeUserStatusCommandHandler>();
 builder.Services.AddScoped<ReplaceUserRolesCommandHandler>();
 builder.Services.AddScoped<ReplaceUserClientAccessCommandHandler>();
 
-// ICurrentUser (sección "IDENTIDAD DEL ADMIN ACTUAL"): implementación HTTP
-// vive en Api (Procofa.Api.Security.HttpContextCurrentUser) — Application
-// solo conoce el puerto. Scoped porque lee HttpContext.
+// ICurrentUser: implementación HTTP vive en Api (Procofa.Api.Security.HttpContextCurrentUser) —
+// Application solo conoce el puerto. Scoped porque lee HttpContext.
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ICurrentUser, HttpContextCurrentUser>();
 
-// Instrucción 05, sección 2 "AUTORIZACIÓN": primera vez que el proyecto
-// exige JWT — hasta ahora solo se EMITÍA el token (login), nunca se
-// VALIDABA en un endpoint protegido. Igual que ProcofaDb/InfrastructureAuthSettings,
-// la validación se registra vía AddOptions<T>().Configure<TDep>(...) — el
-// delegate recibe InfrastructureAuthSettings resuelto desde DI de forma
-// diferida (primera resolución real de JwtBearerOptions, no en este punto),
-// para que WebApplicationFactory pueda seguir sobreescribiendo Jwt:SigningKey
-// en tests exactamente como ya hace con ProcofaDb.
+// Primera vez que el proyecto exige JWT — hasta ahora solo se EMITÍA el token (login), nunca se
+// VALIDABA en un endpoint protegido. Igual que ProcofaDb/InfrastructureAuthSettings, la validación
+// se registra vía AddOptions<T>().Configure<TDep>(...) — el delegate recibe
+// InfrastructureAuthSettings resuelto desde DI de forma diferida (primera resolución real de
+// JwtBearerOptions, no en este punto), para que WebApplicationFactory pueda seguir sobreescribiendo
+// Jwt:SigningKey en tests exactamente como ya hace con ProcofaDb.
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer();
 
@@ -171,7 +164,6 @@ static Task WriteHealthCheckResponseAsync(HttpContext context, HealthReport repo
 }
 
 // Expone el tipo de entry point para WebApplicationFactory<Program> en
-// Procofa.Api.Tests (Instrucción 04) — los top-level statements generan
-// "Program" internal por defecto; esta declaración lo hace visible desde
-// el assembly de tests sin exponer nada más.
+// Procofa.Api.Tests — los top-level statements generan "Program" internal por defecto; esta
+// declaración lo hace visible desde el assembly de tests sin exponer nada más.
 public partial class Program;

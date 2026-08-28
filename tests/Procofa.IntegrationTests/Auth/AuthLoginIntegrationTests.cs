@@ -7,13 +7,9 @@ using Procofa.IntegrationTests.Fixtures;
 namespace Procofa.IntegrationTests.Auth;
 
 /// <summary>
-/// Tests de integración de <c>POST /api/auth/login</c> (Instrucción 04,
-/// sección "TESTS MÍNIMOS" → Infrastructure/integration), corriendo el
-/// grafo REAL de Infrastructure (<see cref="AuthHandlerFactory"/>) contra
-/// PostgreSQL 18 vía Testcontainers, como <c>procofa_app</c> — nunca como
-/// superusuario, para ejercer RLS/ACL de verdad. NO ejecutados por Claude en
-/// este sandbox (Docker inalcanzable) — ver <see cref="PostgresBaselineFixture"/>.
-/// </summary>
+/// Tests de integración de <c>POST /api/auth/login</c>, corriendo el grafo REAL de Infrastructure
+/// (<see cref="AuthHandlerFactory"/>) contra PostgreSQL 18 vía Testcontainers, como
+/// <c>procofa_app</c> — nunca como superusuario, para ejercer RLS/ACL de verdad. </summary>
 [Collection(PostgresBaselineCollection.Name)]
 public sealed class AuthLoginIntegrationTests(PostgresBaselineFixture fixture)
 {

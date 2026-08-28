@@ -7,7 +7,7 @@ using Procofa.Domain.Entities.Identity.ValueObjects;
 
 namespace Procofa.Application.Tests.Users;
 
-/// <summary>Tests de <see cref="CreateUserCommandHandler"/> (Instrucción 05, sección "CREAR USUARIO").</summary>
+/// <summary>Tests de <see cref="CreateUserCommandHandler"/>.</summary>
 public sealed class CreateUserCommandHandlerTests
 {
     private static readonly Guid TenantId = Guid.Parse("00000000-0000-0000-0000-000000000001");
@@ -83,7 +83,7 @@ public sealed class CreateUserCommandHandlerTests
     [Fact]
     public async Task CreateUser_ConRolInexistenteEnElCatalogo_Falla()
     {
-        // Fuera del catálogo cerrado de UserRoleCodes (Instrucción 05, "No inventar roles nuevos").
+        // Fuera del catálogo cerrado de UserRoleCodes.
         var (handler, users) = CreateHandler();
 
         var result = await handler.HandleAsync(ValidCommand(roles: ["ROL_INVENTADO"]), CancellationToken.None);

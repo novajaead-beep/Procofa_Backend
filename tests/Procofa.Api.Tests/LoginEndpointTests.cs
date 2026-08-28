@@ -10,14 +10,9 @@ using Procofa.IntegrationTests.Fixtures;
 namespace Procofa.Api.Tests;
 
 /// <summary>
-/// Tests HTTP end-to-end de <c>POST /api/auth/login</c> (Instrucción 04,
-/// sección "TESTS MÍNIMOS" → Api: "200" / "401" / "400 ProblemDetails"),
-/// vía <see cref="WebApplicationFactory{TEntryPoint}"/> contra la app REAL
-/// (<c>Procofa.Api.Program</c>) apuntando al PostgreSQL desechable de
-/// <see cref="PostgresBaselineFixture"/>. NO ejecutados por Claude en este
-/// sandbox (Docker inalcanzable) — mismo caso que
-/// <c>Procofa.IntegrationTests</c>, cuya fixture se reutiliza aquí.
-/// </summary>
+/// Tests HTTP end-to-end de <c>POST /api/auth/login</c>, vía <see
+/// cref="WebApplicationFactory{TEntryPoint}"/> contra la app REAL (<c>Procofa.Api.Program</c>)
+/// apuntando al PostgreSQL desechable de <see cref="PostgresBaselineFixture"/>. </summary>
 [Collection(PostgresBaselineCollection.Name)]
 public sealed class LoginEndpointTests : IAsyncLifetime
 {

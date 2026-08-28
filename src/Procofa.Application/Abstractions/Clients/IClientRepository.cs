@@ -2,13 +2,10 @@ using Procofa.Domain.Entities.Clients;
 
 namespace Procofa.Application.Abstractions.Clients;
 
-/// <summary>
-/// Puerto de solo-lectura sobre <see cref="Client"/>, mínimo para Instrucción
-/// 05 (gestión de acceso de usuarios CLIENTE vía <c>user_client_access</c>).
-/// Deliberadamente NO es CRUD de clientes (fuera de alcance — sección "NO
-/// implementar todavía": "gestión de clientes/empresas/sedes") ni un
-/// repositorio genérico.
-/// </summary>
+/// <summary> Puerto de solo-lectura sobre <see cref="Client"/>mínimo para (gestión de acceso de
+/// usuarios CLIENTE vía <c>user_client_access</c>). Deliberadamente NO es CRUD de clientes (fuera
+/// de alcance — sección "NO implementar todavía": "gestión de clientes/empresas/sedes") ni un
+/// repositorio genérico. </summary>
 public interface IClientRepository
 {
     /// <summary>

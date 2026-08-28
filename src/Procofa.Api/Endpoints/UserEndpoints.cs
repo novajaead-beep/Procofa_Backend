@@ -12,15 +12,12 @@ using Procofa.Application.UseCases.Users.ReplaceUserRoles;
 namespace Procofa.Api.Endpoints;
 
 /// <summary>
-/// Endpoints de gestión de usuarios (Instrucción 05) — todos bajo
-/// <c>/api/users</c>, todos exclusivos de ADMIN (<see cref="MapUserEndpoints"/>
-/// exige el rol a nivel de grupo, una sola vez). Sin lógica de negocio aquí:
-/// cada handler solo (a) valida la FORMA del request, (b) traduce a un
-/// comando/query de Application, (c) traduce el resultado a HTTP. 401 lo
-/// produce el middleware de autenticación si no hay JWT válido; 403 lo
-/// produce el middleware de autorización si el rol no es ADMIN — ninguno de
-/// los dos se maneja aquí explícitamente.
-/// </summary>
+/// Endpoints de gestión de usuarios — todos bajo <c>/api/users</c>, todos exclusivos de ADMIN (<see
+/// cref="MapUserEndpoints"/> exige el rol a nivel de grupo, una sola vez). Sin lógica de negocio
+/// aquí: cada handler solo (a) valida la FORMA del request, (b) traduce a un comando/query de
+/// Application, (c) traduce el resultado a HTTP. 401 lo produce el middleware de autenticación si
+/// no hay JWT válido; 403 lo produce el middleware de autorización si el rol no es ADMIN — ninguno
+/// de los dos se maneja aquí explícitamente. </summary>
 public static class UserEndpoints
 {
     public static void MapUserEndpoints(this WebApplication app)

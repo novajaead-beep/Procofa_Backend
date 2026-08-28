@@ -4,13 +4,10 @@ using Procofa.Application.Abstractions;
 namespace Procofa.Api.Security;
 
 /// <summary>
-/// Implementación HTTP de <see cref="ICurrentUser"/> (Instrucción 05, sección
-/// "IDENTIDAD DEL ADMIN ACTUAL"). Único lugar de todo el proceso que lee
-/// <c>HttpContext</c> para resolver el usuario autenticado — Application
-/// nunca lo toca directamente. El id sale SIEMPRE de la claim <c>sub</c> del
-/// JWT ya validado por el middleware de autenticación (nunca del body del
-/// request, nunca de un header custom).
-/// </summary>
+/// Implementación HTTP de <see cref="ICurrentUser"/>. Único lugar de todo el proceso que lee
+/// <c>HttpContext</c> para resolver el usuario autenticado — Application nunca lo toca
+/// directamente. El id sale SIEMPRE de la claim <c>sub</c> del JWT ya validado por el middleware de
+/// autenticación (nunca del body del request, nunca de un header custom). </summary>
 public sealed class HttpContextCurrentUser(IHttpContextAccessor httpContextAccessor) : ICurrentUser
 {
     public Guid UserId

@@ -10,11 +10,9 @@ namespace Procofa.Application.Abstractions.Identity;
 public sealed record GeneratedRefreshToken(string RawToken, string TokenHash);
 
 /// <summary>
-/// Puerto de generación de refresh tokens (Instrucción 04, sección "REFRESH
-/// TOKEN"): valor criptográficamente seguro vía
-/// <c>System.Security.Cryptography.RandomNumberGenerator</c>, nunca
-/// <c>System.Random</c>. La implementación concreta vive en Infrastructure.
-/// </summary>
+/// Puerto de generación de refresh tokens: valor criptográficamente seguro vía
+/// <c>System.Security.Cryptography.RandomNumberGenerator</c>, nunca <c>System.Random</c>. La
+/// implementación concreta vive en Infrastructure. </summary>
 public interface IRefreshTokenFactory
 {
     GeneratedRefreshToken Create();

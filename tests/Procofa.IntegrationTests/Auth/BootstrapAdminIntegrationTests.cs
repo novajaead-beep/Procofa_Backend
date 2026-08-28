@@ -5,14 +5,10 @@ using Procofa.IntegrationTests.Fixtures;
 namespace Procofa.IntegrationTests.Auth;
 
 /// <summary>
-/// Tests de integración del bootstrap one-shot del primer ADMIN (Instrucción
-/// 04, sección "TESTS MÍNIMOS" → Infrastructure/integration: "bootstrap crea
-/// ADMIN una vez" / "segundo bootstrap no duplica"), contra PostgreSQL 18
-/// real vía Testcontainers. Cada test usa su propio tenant (vía
-/// <see cref="PostgresBaselineFixture.CreateTenantAsync"/>) para no
-/// interferir entre sí ni con el tenant fijo PROCOFA que otros tests puedan
-/// usar. NO ejecutados por Claude en este sandbox (Docker inalcanzable).
-/// </summary>
+/// Tests de integración del bootstrap one-shot del primer ADMIN, contra PostgreSQL 18 real vía
+/// Testcontainers. Cada test usa su propio tenant (vía <see
+/// cref="PostgresBaselineFixture.CreateTenantAsync"/>) para no interferir entre sí ni con el tenant
+/// fijo PROCOFA que otros tests puedan usar. </summary>
 [Collection(PostgresBaselineCollection.Name)]
 public sealed class BootstrapAdminIntegrationTests(PostgresBaselineFixture fixture)
 {

@@ -3,7 +3,7 @@ using Procofa.Application.Abstractions.Tenancy;
 
 namespace Procofa.Application.UseCases.Users.GetUser;
 
-/// <summary>Caso de uso <c>GET /api/users/{userId}</c> (Instrucción 05). Solo lectura.</summary>
+/// <summary>Caso de uso <c>GET /api/users/{userId}</c>. Solo lectura.</summary>
 public sealed class GetUserQueryHandler(
     ITenantContext tenantContext,
     ITenantUnitOfWork unitOfWork,

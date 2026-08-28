@@ -6,7 +6,7 @@ using Procofa.Domain.Entities.Identity.ValueObjects;
 
 namespace Procofa.Application.Tests.Auth;
 
-/// <summary>Tests de <see cref="BootstrapAdminCommandHandler"/> (Instrucción 04, sección "BOOTSTRAP PRIMER ADMIN").</summary>
+/// <summary>Tests de <see cref="BootstrapAdminCommandHandler"/>.</summary>
 public sealed class BootstrapAdminCommandHandlerTests
 {
     private static readonly Guid TenantId = Guid.Parse("00000000-0000-0000-0000-000000000001");

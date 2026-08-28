@@ -20,14 +20,9 @@
 
   <ItemGroup>
     <!--
-      Instrucción 03: PostgreSQL 18 desechable vía Testcontainers (decisión
-      definitiva — no 16) para RLS/tenant isolation/concurrencia. Escritos en
-      esta instrucción pero NO ejecutados por Claude en ninguno de los dos
-      sandboxes de esta sesión: Docker Hub está bloqueado por el allowlist de
-      egress tanto en el sandbox cloud como en la VM del bridge del usuario
-      (esta última ni siquiera tiene el binario `docker`). Ver el reporte de
-      esta instrucción para el detalle y lo que se necesita para ejecutarlos
-      de verdad.
+      PostgreSQL 18 desechable vía Testcontainers (decisión definitiva — no
+      16) para RLS/tenant isolation/concurrencia. Requiere Docker disponible
+      en el entorno donde se ejecuten estos tests.
     -->
     <ProjectReference Include="..\..\src\Procofa.Infrastructure\Procofa.Infrastructure.csproj" />
     <ProjectReference Include="..\..\src\Procofa.Application\Procofa.Application.csproj" />

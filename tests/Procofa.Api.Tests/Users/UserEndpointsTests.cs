@@ -91,10 +91,9 @@ public sealed class UserEndpointsTests : IAsyncLifetime
     [Fact]
     public async Task PostUsers_ConAdminValido_Devuelve201()
     {
-        // CORRECCIÓN 05.2: CreateUser persiste user_roles.assigned_by_user_id
-        // = ICurrentUser.UserId (el "sub" del JWT) — enforce_same_tenant_references()
-        // exige que ese id exista físicamente en "users" del mismo tenant, así
-        // que el admin autenticado debe sembrarse primero (no basta con un
+        // CreateUser persiste user_roles.assigned_by_user_id = ICurrentUser.UserId (el "sub" del
+        // JWT) — enforce_same_tenant_references() exige que ese id exista físicamente en "users"
+        // del mismo tenant, así que el admin autenticado debe sembrarse primero (no basta con un
         // sub arbitrario válido solo para la autorización HTTP).
         var adminId = Guid.NewGuid();
         await UserEndpointsTestSupport.SeedAdminAsync(

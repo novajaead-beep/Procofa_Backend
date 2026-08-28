@@ -8,11 +8,9 @@ using Procofa.Domain.Enums;
 namespace Procofa.Application.Tests.Auth;
 
 /// <summary>
-/// Tests de <see cref="LoginCommandHandler"/> (Instrucción 04, sección
-/// "TESTS MÍNIMOS" → Application). Todos usan los fakes en memoria de
-/// <c>TestDoubles</c> — sin BD real, sin transacción real (la
-/// <c>FakeTenantUnitOfWork</c> solo ejecuta el delegado directamente).
-/// </summary>
+/// Tests de <see cref="LoginCommandHandler"/>. Todos usan los fakes en memoria de
+/// <c>TestDoubles</c> — sin BD real, sin transacción real (la <c>FakeTenantUnitOfWork</c> solo
+/// ejecuta el delegado directamente). </summary>
 public sealed class LoginCommandHandlerTests
 {
     private static readonly Guid TenantId = Guid.Parse("00000000-0000-0000-0000-000000000001");
@@ -114,11 +112,8 @@ public sealed class LoginCommandHandlerTests
     public async Task Login_UsuarioInactivo_DevuelveUserInactive()
     {
         var user = CreateActiveUser(InMemoryRoleCatalog.Consultor);
-        // No hay setter público para IsActive=false en Domain (no hace falta un método propio para
-        // este test): se construye un usuario a través de reflexión mínima no es necesario — en su
-        // lugar el propio dominio no expone Deactivate() todavía (fuera de alcance de Instrucción 04),
-        // así que este escenario se ejercita marcando IsActive vía el único mecanismo disponible: un
-        // segundo constructor de prueba no existe, por lo que se usa un helper de reflexión de test.
+        // IsActive no tiene setter público — se fuerza vía reflexión para aislar este escenario
+        // del resto del ciclo de vida del usuario.
         typeof(User).GetProperty(nameof(User.IsActive))!.SetValue(user, false);
 
         var (handler, _, accessLogs, _, _) = CreateHandler(PasswordVerificationResult.Success, user);
@@ -186,6 +181,6 @@ public sealed class LoginCommandHandlerTests
         Assert.True(
             propiedadesSospechosas.Length == 0,
             "LoginCommand no debe exponer ningún campo relacionado con tenant — el tenant se " +
-                "resuelve exclusivamente desde ITenantContext (Instrucción 04, TENANT STAGE 1).");
+                "resuelve exclusivamente desde ITenantContext.");
     }
 }

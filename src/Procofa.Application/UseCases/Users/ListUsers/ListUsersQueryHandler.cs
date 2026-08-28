@@ -5,11 +5,9 @@ using Procofa.Application.UseCases.Users;
 namespace Procofa.Application.UseCases.Users.ListUsers;
 
 /// <summary>
-/// Caso de uso <c>GET /api/users</c> (Instrucción 05). Solo lectura — corre
-/// dentro de <see cref="ITenantUnitOfWork.ExecuteReadAsync{T}"/> (BEGIN READ
-/// ONLY + SET LOCAL app.tenant_id), nunca fuera de una transacción
-/// tenant-scoped.
-/// </summary>
+/// Caso de uso <c>GET /api/users</c>. Solo lectura — corre dentro de <see
+/// cref="ITenantUnitOfWork.ExecuteReadAsync{T}"/> (BEGIN READ ONLY + SET LOCAL app.tenant_id),
+/// nunca fuera de una transacción tenant-scoped. </summary>
 public sealed class ListUsersQueryHandler(
     ITenantContext tenantContext,
     ITenantUnitOfWork unitOfWork,

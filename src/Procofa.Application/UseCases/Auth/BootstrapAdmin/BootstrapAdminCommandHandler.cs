@@ -6,13 +6,11 @@ using Procofa.Domain.Entities.Identity.ValueObjects;
 namespace Procofa.Application.UseCases.Auth.BootstrapAdmin;
 
 /// <summary>
-/// Caso de uso one-shot "crear el primer ADMIN" (Instrucción 04, sección
-/// "BOOTSTRAP PRIMER ADMIN"). Idempotente por diseño: si ya existe un
-/// usuario con rol ADMIN en el tenant, no crea nada y devuelve
-/// <see cref="BootstrapAdminOutcome.AlreadyExists"/> — nunca lanza ni
-/// duplica. Nunca expuesto vía HTTP — invocado únicamente desde el host mode
-/// de <c>Procofa.Api</c> (<c>dotnet run -- bootstrap-admin</c>).
-/// </summary>
+/// Caso de uso one-shot "crear el primer ADMIN". Idempotente por diseño: si ya existe un usuario
+/// con rol ADMIN en el tenant, no crea nada y devuelve <see
+/// cref="BootstrapAdminOutcome.AlreadyExists"/> — nunca lanza ni duplica. Nunca expuesto vía HTTP —
+/// invocado únicamente desde el host mode de <c>Procofa.Api</c> (<c>dotnet run --
+/// bootstrap-admin</c>). </summary>
 public sealed class BootstrapAdminCommandHandler(
     ITenantContext tenantContext,
     ITenantUnitOfWork unitOfWork,

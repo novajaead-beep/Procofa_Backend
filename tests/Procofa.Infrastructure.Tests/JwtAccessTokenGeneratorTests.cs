@@ -3,10 +3,8 @@ using Procofa.Infrastructure.Security;
 namespace Procofa.Infrastructure.Tests;
 
 /// <summary>
-/// Tests de <see cref="JwtAccessTokenGenerator"/> (Instrucción 04, sección
-/// "JWT"): claims mínimos exigidos y validación de configuración al
-/// construir (fail-fast, "Config validation al startup").
-/// </summary>
+/// Tests de <see cref="JwtAccessTokenGenerator"/>: claims mínimos exigidos y validación de
+/// configuración al construir (fail-fast, "Config validation al startup"). </summary>
 public sealed class JwtAccessTokenGeneratorTests
 {
     private const string ValidSigningKey = "una-clave-de-firma-de-al-menos-32-bytes-de-largo!!";

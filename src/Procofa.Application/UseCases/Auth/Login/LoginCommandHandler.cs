@@ -7,14 +7,11 @@ using Procofa.Domain.Enums;
 namespace Procofa.Application.UseCases.Auth.Login;
 
 /// <summary>
-/// Caso de uso <c>POST /api/auth/login</c> (Instrucción 04, sección "LOGIN").
-/// Orquesta el flujo completo dentro de UNA transacción tenant-scoped
-/// (<see cref="ITenantUnitOfWork.ExecuteWriteAsync{T}"/>): resolver tenant →
-/// buscar usuario → validar estado/lockout → verificar contraseña →
-/// actualizar intentos/lockout → emitir tokens → registrar access_log →
-/// commit. Ningún paso individual hace su propio commit — o todo el login se
-/// confirma junto, o nada.
-/// </summary>
+/// Caso de uso <c>POST /api/auth/login</c>. Orquesta el flujo completo dentro de UNA transacción
+/// tenant-scoped (<see cref="ITenantUnitOfWork.ExecuteWriteAsync{T}"/>): resolver tenant → buscar
+/// usuario → validar estado/lockout → verificar contraseña → actualizar intentos/lockout → emitir
+/// tokens → registrar access_log → commit. Ningún paso individual hace su propio commit — o todo el
+/// login se confirma junto, o nada. </summary>
 public sealed class LoginCommandHandler(
     ITenantContext tenantContext,
     ITenantUnitOfWork unitOfWork,
@@ -29,8 +26,7 @@ public sealed class LoginCommandHandler(
 {
     public Task<LoginResult> HandleAsync(LoginCommand command, CancellationToken cancellationToken)
     {
-        // Instrucción 04, sección "TENANT STAGE 1": resuelto SIEMPRE desde
-        // configuración (ITenantContext), nunca desde el LoginCommand.
+        // resuelto SIEMPRE desde configuración (ITenantContext), nunca desde el LoginCommand.
         var tenantId = tenantContext.TenantId;
         var normalizedEmail = User.Normalize(command.Email);
         var nowUtc = dateTimeProvider.UtcNow;

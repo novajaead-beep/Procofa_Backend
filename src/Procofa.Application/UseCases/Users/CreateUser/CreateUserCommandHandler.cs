@@ -9,10 +9,9 @@ using Procofa.Domain.Entities.Identity.ValueObjects;
 namespace Procofa.Application.UseCases.Users.CreateUser;
 
 /// <summary>
-/// Caso de uso <c>POST /api/users</c> (Instrucción 05). Persiste
-/// <c>User</c> + <c>UserRoles</c> + <c>UserClientAccess</c> en UNA sola
-/// transacción tenant-scoped (<see cref="ITenantUnitOfWork.ExecuteWriteAsync{T}"/>).
-/// </summary>
+/// Caso de uso <c>POST /api/users</c>. Persiste <c>User</c> + <c>UserRoles</c> +
+/// <c>UserClientAccess</c> en UNA sola transacción tenant-scoped (<see
+/// cref="ITenantUnitOfWork.ExecuteWriteAsync{T}"/>). </summary>
 public sealed class CreateUserCommandHandler(
     ITenantContext tenantContext,
     ITenantUnitOfWork unitOfWork,

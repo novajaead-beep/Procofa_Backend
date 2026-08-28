@@ -4,9 +4,8 @@ namespace Procofa.Api.Contracts.Users;
 public sealed record UserClientAccessResponse(Guid ClientId);
 
 /// <summary>
-/// Respuesta de <c>GET /api/users/{userId}</c> (Instrucción 05, sección 3.2).
-/// Nunca incluye <c>password_hash</c>, refresh tokens ni password reset tokens.
-/// </summary>
+/// Respuesta de <c>GET /api/users/{userId}</c>. Nunca incluye <c>password_hash</c>, refresh tokens
+/// ni password reset tokens. </summary>
 public sealed record UserDetailResponse(
     Guid Id,
     string Email,

@@ -6,7 +6,7 @@ public enum GetUserError
     NotFound,
 }
 
-/// <summary>Un acceso a cliente concedido, tal como lo expone el detalle de usuario (Instrucción 05, sección "DETALLE DE USUARIO").</summary>
+/// <summary>Un acceso a cliente concedido, tal como lo expone el detalle de usuario.</summary>
 public sealed record UserClientAccessItem(Guid ClientId);
 
 /// <summary>Resultado de <see cref="GetUserQueryHandler"/> — construido únicamente vía <see cref="Success"/>/<see cref="NotFound"/>. Nunca expone <c>password_hash</c>, refresh tokens ni password reset tokens.</summary>

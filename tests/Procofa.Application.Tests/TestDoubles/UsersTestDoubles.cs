@@ -4,7 +4,9 @@ using Procofa.Domain.Entities.Clients;
 
 namespace Procofa.Application.Tests.TestDoubles;
 
-/// <summary>Fakes deterministas para los tests de gestión de usuarios (Instrucción 05) — mismo criterio que <see cref="InMemoryRoleCatalog"/> y compañía en AuthTestDoubles.cs: sin librería de mocking.</summary>
+/// <summary>Fakes deterministas para los tests de gestión de usuarios — mismo criterio que <see
+/// cref="InMemoryRoleCatalog"/> y compañía en AuthTestDoubles.cs: sin librería de
+/// mocking.</summary>
 internal sealed class FakeCurrentUser(Guid userId) : ICurrentUser
 {
     public Guid UserId { get; } = userId;

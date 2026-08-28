@@ -7,11 +7,9 @@ using Procofa.Domain.Entities.Identity.ValueObjects;
 namespace Procofa.Application.UseCases.Users.ReplaceUserRoles;
 
 /// <summary>
-/// Caso de uso <c>PUT /api/users/{userId}/roles</c> (Instrucción 05).
-/// Reemplaza el conjunto completo — nunca hace merge parcial. Si el nuevo
-/// conjunto ya no incluye CLIENTE, limpia <c>user_client_access</c> (sección
-/// "REGLAS PARA CLIENTE").
-/// </summary>
+/// Caso de uso <c>PUT /api/users/{userId}/roles</c>. Reemplaza el conjunto completo — nunca hace
+/// merge parcial. Si el nuevo conjunto ya no incluye CLIENTE, limpia <c>user_client_access</c>
+/// (sección "REGLAS PARA CLIENTE"). </summary>
 public sealed class ReplaceUserRolesCommandHandler(
     ITenantContext tenantContext,
     ITenantUnitOfWork unitOfWork,

@@ -5,16 +5,13 @@ using Procofa.Domain.Entities.Identity;
 namespace Procofa.Infrastructure.Persistence.Repositories;
 
 /// <summary>
-/// Implementación de <see cref="IUserRepository"/> (Instrucción 04) sobre
-/// <see cref="ProcofaDbContext"/>. Deliberadamente acoplada a las
-/// necesidades exactas de Auth — no un repositorio genérico. Toda query
-/// asume que ya corre dentro de la transacción tenant-scoped abierta por
-/// <c>ITenantUnitOfWork</c> (mismo <see cref="ProcofaDbContext"/> scoped,
-/// con <c>SET LOCAL app.tenant_id</c> ya aplicado) — RLS filtra por tenant a
-/// nivel de BD; el filtro explícito <c>TenantId == tenantId</c> en
-/// <see cref="FindByNormalizedEmailAsync"/> es defensa en profundidad, no el
-/// único mecanismo de aislamiento.
-/// </summary>
+/// Implementación de <see cref="IUserRepository"/> sobre <see cref="ProcofaDbContext"/>.
+/// Deliberadamente acoplada a las necesidades exactas de Auth — no un repositorio genérico. Toda
+/// query asume que ya corre dentro de la transacción tenant-scoped abierta por
+/// <c>ITenantUnitOfWork</c> (mismo <see cref="ProcofaDbContext"/> scoped, con <c>SET LOCAL
+/// app.tenant_id</c> ya aplicado) — RLS filtra por tenant a nivel de BD; el filtro explícito
+/// <c>TenantId == tenantId</c> en <see cref="FindByNormalizedEmailAsync"/> es defensa en
+/// profundidad, no el único mecanismo de aislamiento. </summary>
 public sealed class UserRepository(ProcofaDbContext dbContext) : IUserRepository
 {
     public Task<User?> FindByNormalizedEmailAsync(
@@ -63,9 +60,8 @@ public sealed class UserRepository(ProcofaDbContext dbContext) : IUserRepository
         dbContext.Users.AnyAsync(
             u => u.TenantId == tenantId && u.NormalizedEmail == normalizedEmail, cancellationToken);
 
-    // Instrucción 05, sección 11: AsSplitQuery() al cargar Roles + ClientAccess
-    // simultáneamente sobre un mismo User — evita el warning de EF por
-    // múltiples colecciones en una sola consulta (cartesian explosion).
+    // AsSplitQuery() al cargar Roles + ClientAccess simultáneamente sobre un mismo User — evita el
+    // warning de EF por múltiples colecciones en una sola consulta (cartesian explosion).
     public Task<User?> GetByIdAsync(Guid tenantId, Guid userId, CancellationToken cancellationToken) =>
         dbContext.Users
             .Include(u => u.Roles)

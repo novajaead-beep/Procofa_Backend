@@ -7,17 +7,14 @@ using Procofa.Application.Abstractions.Identity;
 namespace Procofa.Infrastructure.Security;
 
 /// <summary>
-/// Implementación de <see cref="IAccessTokenGenerator"/> (Instrucción 04,
-/// sección "JWT"). Firma HMAC-SHA256 con una clave simétrica —
-/// suficiente para Etapa 1 (un solo servicio emite y valida). Claims
-/// mínimos exigidos por la instrucción: <c>sub</c>, <c>tenant_id</c>,
-/// <c>email</c>, <c>roles</c> (uno por rol — nunca un único claim con la
-/// lista serializada, para que <c>ClaimsPrincipal.IsInRole</c> funcione sin
-/// parseo adicional el día que se agregue el middleware de autorización).
-/// Se agrega también <c>jti</c> (id único del token, sección "AUTH ADR" del
-/// hilo previo — soporta futura revocación/blacklist, aunque esta
-/// instrucción no la implementa) e <c>iat</c>/<c>exp</c> estándar, ambos en UTC.
-/// </summary>
+/// Implementación de <see cref="IAccessTokenGenerator"/>. Firma HMAC-SHA256 con una clave simétrica
+/// — suficiente para Etapa 1 (un solo servicio emite y valida). Claims mínimos exigidos por la
+/// instrucción: <c>sub</c>, <c>tenant_id</c>, <c>email</c>, <c>roles</c> (uno por rol — nunca un
+/// único claim con la lista serializada, para que <c>ClaimsPrincipal.IsInRole</c> funcione sin
+/// parseo adicional el día que se agregue el middleware de autorización). Se agrega también
+/// <c>jti</c> (id único del token, sección "AUTH ADR" del hilo previo — soporta futura
+/// revocación/blacklist, aunque esta instrucción no la implementa) e <c>iat</c>/<c>exp</c>
+/// estándar, ambos en UTC. </summary>
 public sealed class JwtAccessTokenGenerator : IAccessTokenGenerator
 {
     private const int MinimumSigningKeyBytes = 32; // 256 bits — mínimo recomendado para HS256.

@@ -8,14 +8,12 @@ using Procofa.IntegrationTests.Fixtures;
 namespace Procofa.IntegrationTests.Users;
 
 /// <summary>
-/// Tests de integración de gestión de usuarios (Instrucción 05, sección 15),
-/// contra PostgreSQL 18 real vía Testcontainers, corriendo el grafo REAL de
-/// Infrastructure (<see cref="UsersHandlerFactory"/>) como <c>procofa_app</c>.
-/// La verificación física usa <c>SuperuserConnectionString</c> ÚNICAMENTE en
-/// la fase de assert (mismo motivo que <c>BootstrapAdminIntegrationTests</c>:
-/// una conexión <c>procofa_app</c> nueva, sin <c>SET LOCAL app.tenant_id</c>,
-/// vería 0 filas por RLS incluso si la escritura fue correcta).
-/// </summary>
+/// Tests de integración de gestión de usuarios, contra PostgreSQL 18 real vía Testcontainers,
+/// corriendo el grafo REAL de Infrastructure (<see cref="UsersHandlerFactory"/>) como
+/// <c>procofa_app</c>. La verificación física usa <c>SuperuserConnectionString</c> ÚNICAMENTE en la
+/// fase de assert (mismo motivo que <c>BootstrapAdminIntegrationTests</c>: una conexión
+/// <c>procofa_app</c> nueva, sin <c>SET LOCAL app.tenant_id</c>, vería 0 filas por RLS incluso si
+/// la escritura fue correcta). </summary>
 [Collection(PostgresBaselineCollection.Name)]
 public sealed class UsersManagementIntegrationTests(PostgresBaselineFixture fixture)
 {

@@ -1,6 +1,7 @@
 namespace Procofa.Api.Contracts.Users;
 
-/// <summary>Body de <c>POST /api/users</c> (Instrucción 05, sección 4). Todo nullable a propósito — la validación de "obligatorio" ocurre explícitamente en Application, nunca vía excepción de binding.</summary>
+/// <summary>Body de <c>POST /api/users</c>. Todo nullable a propósito — la validación de
+/// "obligatorio" ocurre explícitamente en Application, nunca vía excepción de binding.</summary>
 public sealed record CreateUserRequest(
     string? Email,
     string? FirstName,

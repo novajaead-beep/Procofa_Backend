@@ -4,7 +4,7 @@ using Procofa.Domain.Entities.Identity;
 
 namespace Procofa.Application.Tests.Users;
 
-/// <summary>Tests de <see cref="ChangeUserStatusCommandHandler"/> (Instrucción 05, sección "ACTIVAR / DESACTIVAR").</summary>
+/// <summary>Tests de <see cref="ChangeUserStatusCommandHandler"/>.</summary>
 public sealed class ChangeUserStatusCommandHandlerTests
 {
     private static readonly Guid TenantId = Guid.Parse("00000000-0000-0000-0000-000000000001");

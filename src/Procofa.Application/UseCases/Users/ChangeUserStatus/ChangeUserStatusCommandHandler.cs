@@ -4,7 +4,8 @@ using Procofa.Application.Abstractions.Tenancy;
 
 namespace Procofa.Application.UseCases.Users.ChangeUserStatus;
 
-/// <summary>Caso de uso <c>PATCH /api/users/{userId}/status</c> (Instrucción 05). Nunca hace hard delete — solo activa/desactiva.</summary>
+/// <summary>Caso de uso <c>PATCH /api/users/{userId}/status</c>. Nunca hace hard delete — solo
+/// activa/desactiva.</summary>
 public sealed class ChangeUserStatusCommandHandler(
     ITenantContext tenantContext,
     ITenantUnitOfWork unitOfWork,
