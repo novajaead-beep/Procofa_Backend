@@ -52,4 +52,29 @@ public sealed class ClientContact
         Phone = phone;
         IsActive = true;
     }
+
+    /// <summary><c>PUT /api/clients/{clientId}/contacts/{contactId}</c>: reemplaza los campos
+    /// editables. Nunca toca <see cref="Id"/>/<see cref="TenantId"/>/<see cref="ClientId"/>/<see
+    /// cref="CreatedAtUtc"/>.</summary>
+    public void UpdateDetails(
+        Guid? auditedCompanyId, string firstName, string lastName, string? jobTitle, string? email, string? phone)
+    {
+        AuditedCompanyId = auditedCompanyId;
+        FirstName = firstName;
+        LastName = lastName;
+        JobTitle = jobTitle;
+        Email = email;
+        Phone = phone;
+    }
+
+    public void Activate()
+    {
+        IsActive = true;
+    }
+
+    /// <summary>Soft — nunca hard delete.</summary>
+    public void Deactivate()
+    {
+        IsActive = false;
+    }
 }

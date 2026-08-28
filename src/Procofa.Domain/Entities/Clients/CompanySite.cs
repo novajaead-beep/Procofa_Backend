@@ -63,4 +63,33 @@ public sealed class CompanySite
         Longitude = longitude;
         IsActive = true;
     }
+
+    /// <summary><c>PUT /api/clients/{clientId}/companies/{companyId}/sites/{siteId}</c>: reemplaza
+    /// los campos editables. Nunca toca <see cref="Id"/>/<see cref="TenantId"/>/<see
+    /// cref="AuditedCompanyId"/>/<see cref="CreatedAtUtc"/>.</summary>
+    public void UpdateDetails(
+        string name, string addressLine1, string? addressLine2, string? city, string? stateRegion,
+        string? postalCode, string country, decimal? latitude, decimal? longitude)
+    {
+        Name = name;
+        AddressLine1 = addressLine1;
+        AddressLine2 = addressLine2;
+        City = city;
+        StateRegion = stateRegion;
+        PostalCode = postalCode;
+        Country = country;
+        Latitude = latitude;
+        Longitude = longitude;
+    }
+
+    public void Activate()
+    {
+        IsActive = true;
+    }
+
+    /// <summary>Soft — nunca hard delete.</summary>
+    public void Deactivate()
+    {
+        IsActive = false;
+    }
 }

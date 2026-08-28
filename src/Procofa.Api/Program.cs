@@ -13,6 +13,26 @@ using Procofa.Api.Security;
 using Procofa.Application.Abstractions;
 using Procofa.Application.Abstractions.Identity;
 using Procofa.Application.UseCases.Auth.Login;
+using Procofa.Application.UseCases.Clients.ChangeClientStatus;
+using Procofa.Application.UseCases.Clients.CreateClient;
+using Procofa.Application.UseCases.Clients.GetClient;
+using Procofa.Application.UseCases.Clients.ListClients;
+using Procofa.Application.UseCases.Clients.UpdateClient;
+using Procofa.Application.UseCases.Companies.ChangeCompanyStatus;
+using Procofa.Application.UseCases.Companies.CreateCompany;
+using Procofa.Application.UseCases.Companies.GetCompany;
+using Procofa.Application.UseCases.Companies.ListCompanies;
+using Procofa.Application.UseCases.Companies.UpdateCompany;
+using Procofa.Application.UseCases.Contacts.ChangeContactStatus;
+using Procofa.Application.UseCases.Contacts.CreateContact;
+using Procofa.Application.UseCases.Contacts.GetContact;
+using Procofa.Application.UseCases.Contacts.ListContacts;
+using Procofa.Application.UseCases.Contacts.UpdateContact;
+using Procofa.Application.UseCases.Sites.ChangeSiteStatus;
+using Procofa.Application.UseCases.Sites.CreateSite;
+using Procofa.Application.UseCases.Sites.GetSite;
+using Procofa.Application.UseCases.Sites.ListSites;
+using Procofa.Application.UseCases.Sites.UpdateSite;
 using Procofa.Application.UseCases.Users.ChangeUserStatus;
 using Procofa.Application.UseCases.Users.CreateUser;
 using Procofa.Application.UseCases.Users.GetUser;
@@ -60,6 +80,29 @@ builder.Services.AddScoped<CreateUserCommandHandler>();
 builder.Services.AddScoped<ChangeUserStatusCommandHandler>();
 builder.Services.AddScoped<ReplaceUserRolesCommandHandler>();
 builder.Services.AddScoped<ReplaceUserClientAccessCommandHandler>();
+
+// Clientes/empresas auditadas/sedes/contactos — mismo criterio: registro directo en el
+// Composition Root, sin contenedor DI en Application.
+builder.Services.AddScoped<ListClientsQueryHandler>();
+builder.Services.AddScoped<GetClientQueryHandler>();
+builder.Services.AddScoped<CreateClientCommandHandler>();
+builder.Services.AddScoped<UpdateClientCommandHandler>();
+builder.Services.AddScoped<ChangeClientStatusCommandHandler>();
+builder.Services.AddScoped<ListCompaniesQueryHandler>();
+builder.Services.AddScoped<GetCompanyQueryHandler>();
+builder.Services.AddScoped<CreateCompanyCommandHandler>();
+builder.Services.AddScoped<UpdateCompanyCommandHandler>();
+builder.Services.AddScoped<ChangeCompanyStatusCommandHandler>();
+builder.Services.AddScoped<ListSitesQueryHandler>();
+builder.Services.AddScoped<GetSiteQueryHandler>();
+builder.Services.AddScoped<CreateSiteCommandHandler>();
+builder.Services.AddScoped<UpdateSiteCommandHandler>();
+builder.Services.AddScoped<ChangeSiteStatusCommandHandler>();
+builder.Services.AddScoped<ListContactsQueryHandler>();
+builder.Services.AddScoped<GetContactQueryHandler>();
+builder.Services.AddScoped<CreateContactCommandHandler>();
+builder.Services.AddScoped<UpdateContactCommandHandler>();
+builder.Services.AddScoped<ChangeContactStatusCommandHandler>();
 
 // ICurrentUser: implementación HTTP vive en Api (Procofa.Api.Security.HttpContextCurrentUser) —
 // Application solo conoce el puerto. Scoped porque lee HttpContext.
@@ -153,6 +196,10 @@ app.MapHealthChecks("/health", new HealthCheckOptions
 
 app.MapAuthEndpoints();
 app.MapUserEndpoints();
+app.MapClientEndpoints();
+app.MapCompanyEndpoints();
+app.MapSiteEndpoints();
+app.MapContactEndpoints();
 
 app.Run();
 return 0;

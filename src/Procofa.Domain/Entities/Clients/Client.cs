@@ -68,4 +68,40 @@ public sealed class Client
         Notes = notes;
         IsActive = true;
     }
+
+    /// <summary><c>PUT /api/clients/{id}</c>: reemplaza los campos editables. Nunca toca <see
+    /// cref="Id"/>/<see cref="TenantId"/>/<see cref="CreatedAtUtc"/>.</summary>
+    public void UpdateDetails(
+        string legalName, string? tradeName, string? taxId, string? industry, string? companyType, string? notes)
+    {
+        LegalName = legalName;
+        TradeName = tradeName;
+        TaxId = taxId;
+        Industry = industry;
+        CompanyType = companyType;
+        Notes = notes;
+    }
+
+    /// <summary><c>PATCH /api/clients/{id}/status</c>: reactiva el cliente (nunca borra ni resetea
+    /// nada más).</summary>
+    public void Activate()
+    {
+        IsActive = true;
+    }
+
+    /// <summary><c>PATCH /api/clients/{id}/status</c>: desactiva el cliente (soft — nunca hard
+    /// delete).</summary>
+    public void Deactivate()
+    {
+        IsActive = false;
+    }
+
+    /// <summary><c>PUT /api/clients/{id}</c> (cuando el request trae programas): reemplaza el
+    /// conjunto completo de <see cref="Programs"/> — nunca hace merge parcial. Mismo mecanismo de
+    /// detección de cambios que <c>User.ReplaceRoles</c>.</summary>
+    public void ReplacePrograms(IEnumerable<ClientProgram> newPrograms)
+    {
+        _programs.Clear();
+        _programs.AddRange(newPrograms);
+    }
 }

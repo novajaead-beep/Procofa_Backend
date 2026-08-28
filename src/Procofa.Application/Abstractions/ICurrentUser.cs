@@ -9,4 +9,10 @@ namespace Procofa.Application.Abstractions;
 public interface ICurrentUser
 {
     Guid UserId { get; }
+
+    /// <summary>Códigos de rol (claim <c>roles</c> del JWT ya validado) del usuario autenticado —
+    /// usado para el alcance de lectura de CLIENTE en Clients/Companies/Sites/Contacts (nunca para
+    /// decisiones de escritura, que siguen resueltas por <c>[Authorize(Roles=...)]</c> a nivel de
+    /// endpoint).</summary>
+    IReadOnlyCollection<string> Roles { get; }
 }

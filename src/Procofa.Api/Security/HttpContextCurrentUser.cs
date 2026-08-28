@@ -32,4 +32,16 @@ public sealed class HttpContextCurrentUser(IHttpContextAccessor httpContextAcces
             return userId;
         }
     }
+
+    public IReadOnlyCollection<string> Roles
+    {
+        get
+        {
+            var httpContext = httpContextAccessor.HttpContext
+                ?? throw new InvalidOperationException(
+                    "ICurrentUser se resolvió fuera de un HttpContext activo.");
+
+            return httpContext.User.FindAll("roles").Select(c => c.Value).ToArray();
+        }
+    }
 }

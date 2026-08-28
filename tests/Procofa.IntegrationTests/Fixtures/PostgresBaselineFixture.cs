@@ -237,6 +237,62 @@ public sealed class PostgresBaselineFixture : IAsyncLifetime
         return companyId;
     }
 
+    /// <summary>Asigna un programa de cumplimiento a un cliente (<c>client_programs</c>).</summary>
+    public async Task AssignClientProgramAsync(Guid tenantId, Guid clientId, Guid programId)
+    {
+        await using var connection = await OpenSuperuserConnectionAsync();
+        await using var command = connection.CreateCommand();
+        command.CommandText = """
+            INSERT INTO public.client_programs (tenant_id, client_id, program_id)
+            VALUES (@tenantId, @clientId, @programId);
+            """;
+        command.Parameters.AddWithValue("tenantId", tenantId);
+        command.Parameters.AddWithValue("clientId", clientId);
+        command.Parameters.AddWithValue("programId", programId);
+        await command.ExecuteNonQueryAsync();
+    }
+
+    /// <summary>Crea una sede mínima dentro de una empresa auditada.</summary>
+    public async Task<Guid> CreateCompanySiteAsync(Guid tenantId, Guid auditedCompanyId, string name)
+    {
+        var siteId = Guid.NewGuid();
+
+        await using var connection = await OpenSuperuserConnectionAsync();
+        await using var command = connection.CreateCommand();
+        command.CommandText = """
+            INSERT INTO public.company_sites (id, tenant_id, audited_company_id, name, address_line1, is_active)
+            VALUES (@id, @tenantId, @auditedCompanyId, @name, 'Sin dirección', true);
+            """;
+        command.Parameters.AddWithValue("id", siteId);
+        command.Parameters.AddWithValue("tenantId", tenantId);
+        command.Parameters.AddWithValue("auditedCompanyId", auditedCompanyId);
+        command.Parameters.AddWithValue("name", name);
+        await command.ExecuteNonQueryAsync();
+
+        return siteId;
+    }
+
+    /// <summary>Crea un contacto mínimo dentro de un cliente.</summary>
+    public async Task<Guid> CreateClientContactAsync(Guid tenantId, Guid clientId, string firstName, string lastName)
+    {
+        var contactId = Guid.NewGuid();
+
+        await using var connection = await OpenSuperuserConnectionAsync();
+        await using var command = connection.CreateCommand();
+        command.CommandText = """
+            INSERT INTO public.client_contacts (id, tenant_id, client_id, first_name, last_name, is_active)
+            VALUES (@id, @tenantId, @clientId, @firstName, @lastName, true);
+            """;
+        command.Parameters.AddWithValue("id", contactId);
+        command.Parameters.AddWithValue("tenantId", tenantId);
+        command.Parameters.AddWithValue("clientId", clientId);
+        command.Parameters.AddWithValue("firstName", firstName);
+        command.Parameters.AddWithValue("lastName", lastName);
+        await command.ExecuteNonQueryAsync();
+
+        return contactId;
+    }
+
     /// <summary>
     /// Busca el <c>id</c> de una fila de catálogo por su <c>code</c> — evita
     /// hardcodear los GUID de <c>003_seed_catalogs.sql</c> en los tests

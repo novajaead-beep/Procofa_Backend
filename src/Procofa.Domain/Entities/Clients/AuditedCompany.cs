@@ -63,4 +63,31 @@ public sealed class AuditedCompany
         IsClientCompany = isClientCompany;
         IsActive = true;
     }
+
+    /// <summary><c>PUT /api/clients/{clientId}/companies/{companyId}</c>: reemplaza los campos
+    /// editables. Nunca toca <see cref="Id"/>/<see cref="TenantId"/>/<see cref="ClientId"/>/<see
+    /// cref="CreatedAtUtc"/>.</summary>
+    public void UpdateDetails(
+        Guid? defaultProfileId, string legalName, string? tradeName, string? taxId, string? industry,
+        string? companyType, bool isClientCompany)
+    {
+        DefaultProfileId = defaultProfileId;
+        LegalName = legalName;
+        TradeName = tradeName;
+        TaxId = taxId;
+        Industry = industry;
+        CompanyType = companyType;
+        IsClientCompany = isClientCompany;
+    }
+
+    public void Activate()
+    {
+        IsActive = true;
+    }
+
+    /// <summary>Soft — nunca hard delete.</summary>
+    public void Deactivate()
+    {
+        IsActive = false;
+    }
 }
