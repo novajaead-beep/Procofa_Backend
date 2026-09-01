@@ -47,4 +47,30 @@ public sealed class ChecklistVersion
         CreatedByUserId = createdByUserId;
         Status = ChecklistVersionStatus.Draft;
     }
+
+    public bool IsEditable => Status == ChecklistVersionStatus.Draft;
+
+    public void UpdateDetails(string? changeNotes)
+    {
+        EnsureEditable();
+        ChangeNotes = changeNotes;
+    }
+
+    public void Publish(DateTime publishedAtUtc)
+    {
+        EnsureEditable();
+        Status = ChecklistVersionStatus.Published;
+        PublishedAtUtc = publishedAtUtc;
+    }
+
+    /// <summary>Defensa en profundidad — Application ya debe validar <see cref="IsEditable"/> antes
+    /// de llegar aquí; este método existe para que el propio agregado nunca acepte una mutación
+    /// inconsistente con su estado.</summary>
+    public void EnsureEditable()
+    {
+        if (!IsEditable)
+        {
+            throw new InvalidOperationException("La versión ya no admite modificaciones: no está en DRAFT.");
+        }
+    }
 }

@@ -19,4 +19,8 @@ public interface IProgramRepository
     /// </summary>
     Task<IReadOnlyCollection<string>> GetCodesByIdsAsync(
         IReadOnlyCollection<Guid> programIds, CancellationToken cancellationToken);
+
+    Task<ComplianceProgram?> GetByIdAsync(Guid id, CancellationToken cancellationToken);
+
+    Task<ComplianceProgram?> FindByCodeAsync(string code, CancellationToken cancellationToken);
 }

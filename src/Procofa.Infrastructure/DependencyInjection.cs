@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Procofa.Application.Abstractions;
 using Procofa.Application.Abstractions.Catalogs;
+using Procofa.Application.Abstractions.Checklists;
 using Procofa.Application.Abstractions.Clients;
 using Procofa.Application.Abstractions.Identity;
 using Procofa.Application.Abstractions.Tenancy;
@@ -74,6 +75,13 @@ public static class DependencyInjection
         services.AddScoped<ICompanySiteRepository, CompanySiteRepository>();
         services.AddScoped<IClientContactRepository, ClientContactRepository>();
         services.AddScoped<IProgramRepository, ProgramRepository>();
+        services.AddScoped<IProfileRepository, ProfileRepository>();
+        services.AddScoped<IAuditTypeRepository, AuditTypeRepository>();
+
+        services.AddScoped<IChecklistRepository, ChecklistRepository>();
+        services.AddScoped<IChecklistVersionRepository, ChecklistVersionRepository>();
+        services.AddScoped<IChecklistSectionRepository, ChecklistSectionRepository>();
+        services.AddScoped<ICriterionRepository, CriterionRepository>();
 
         // Adapters de seguridad — sin estado propio salvo la config ya resuelta, seguros como singleton.
         services.AddSingleton<IPasswordHasher, PasswordHasherAdapter>();

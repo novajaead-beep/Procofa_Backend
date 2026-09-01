@@ -13,6 +13,21 @@ using Procofa.Api.Security;
 using Procofa.Application.Abstractions;
 using Procofa.Application.Abstractions.Identity;
 using Procofa.Application.UseCases.Auth.Login;
+using Procofa.Application.UseCases.ChecklistSections.CreateChecklistSection;
+using Procofa.Application.UseCases.ChecklistSections.DeleteChecklistSection;
+using Procofa.Application.UseCases.ChecklistSections.ListChecklistSections;
+using Procofa.Application.UseCases.ChecklistSections.UpdateChecklistSection;
+using Procofa.Application.UseCases.Checklists.ChangeChecklistStatus;
+using Procofa.Application.UseCases.Checklists.CreateChecklist;
+using Procofa.Application.UseCases.Checklists.GetChecklist;
+using Procofa.Application.UseCases.Checklists.ListChecklists;
+using Procofa.Application.UseCases.Checklists.ResolveChecklist;
+using Procofa.Application.UseCases.Checklists.UpdateChecklist;
+using Procofa.Application.UseCases.ChecklistVersions.CreateChecklistVersion;
+using Procofa.Application.UseCases.ChecklistVersions.GetChecklistVersion;
+using Procofa.Application.UseCases.ChecklistVersions.ListChecklistVersions;
+using Procofa.Application.UseCases.ChecklistVersions.PublishChecklistVersion;
+using Procofa.Application.UseCases.ChecklistVersions.UpdateChecklistVersion;
 using Procofa.Application.UseCases.Clients.ChangeClientStatus;
 using Procofa.Application.UseCases.Clients.CreateClient;
 using Procofa.Application.UseCases.Clients.GetClient;
@@ -28,6 +43,11 @@ using Procofa.Application.UseCases.Contacts.CreateContact;
 using Procofa.Application.UseCases.Contacts.GetContact;
 using Procofa.Application.UseCases.Contacts.ListContacts;
 using Procofa.Application.UseCases.Contacts.UpdateContact;
+using Procofa.Application.UseCases.Criteria.CreateCriterion;
+using Procofa.Application.UseCases.Criteria.DeleteCriterion;
+using Procofa.Application.UseCases.Criteria.GetCriterion;
+using Procofa.Application.UseCases.Criteria.ListCriteria;
+using Procofa.Application.UseCases.Criteria.UpdateCriterion;
 using Procofa.Application.UseCases.Sites.ChangeSiteStatus;
 using Procofa.Application.UseCases.Sites.CreateSite;
 using Procofa.Application.UseCases.Sites.GetSite;
@@ -103,6 +123,29 @@ builder.Services.AddScoped<GetContactQueryHandler>();
 builder.Services.AddScoped<CreateContactCommandHandler>();
 builder.Services.AddScoped<UpdateContactCommandHandler>();
 builder.Services.AddScoped<ChangeContactStatusCommandHandler>();
+
+// Checklists/versiones/secciones/criterios — mismo criterio: registro directo en el
+// Composition Root, sin contenedor DI en Application.
+builder.Services.AddScoped<ListChecklistsQueryHandler>();
+builder.Services.AddScoped<GetChecklistQueryHandler>();
+builder.Services.AddScoped<CreateChecklistCommandHandler>();
+builder.Services.AddScoped<UpdateChecklistCommandHandler>();
+builder.Services.AddScoped<ChangeChecklistStatusCommandHandler>();
+builder.Services.AddScoped<ResolveChecklistQueryHandler>();
+builder.Services.AddScoped<ListChecklistVersionsQueryHandler>();
+builder.Services.AddScoped<GetChecklistVersionQueryHandler>();
+builder.Services.AddScoped<CreateChecklistVersionCommandHandler>();
+builder.Services.AddScoped<UpdateChecklistVersionCommandHandler>();
+builder.Services.AddScoped<PublishChecklistVersionCommandHandler>();
+builder.Services.AddScoped<ListChecklistSectionsQueryHandler>();
+builder.Services.AddScoped<CreateChecklistSectionCommandHandler>();
+builder.Services.AddScoped<UpdateChecklistSectionCommandHandler>();
+builder.Services.AddScoped<DeleteChecklistSectionCommandHandler>();
+builder.Services.AddScoped<ListCriteriaQueryHandler>();
+builder.Services.AddScoped<GetCriterionQueryHandler>();
+builder.Services.AddScoped<CreateCriterionCommandHandler>();
+builder.Services.AddScoped<UpdateCriterionCommandHandler>();
+builder.Services.AddScoped<DeleteCriterionCommandHandler>();
 
 // ICurrentUser: implementación HTTP vive en Api (Procofa.Api.Security.HttpContextCurrentUser) —
 // Application solo conoce el puerto. Scoped porque lee HttpContext.
@@ -200,6 +243,10 @@ app.MapClientEndpoints();
 app.MapCompanyEndpoints();
 app.MapSiteEndpoints();
 app.MapContactEndpoints();
+app.MapChecklistEndpoints();
+app.MapChecklistVersionEndpoints();
+app.MapChecklistSectionEndpoints();
+app.MapCriterionEndpoints();
 
 app.Run();
 return 0;

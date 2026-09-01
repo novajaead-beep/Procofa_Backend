@@ -38,4 +38,13 @@ public sealed class ChecklistSection
         Description = description;
         SortOrder = sortOrder;
     }
+
+    public void UpdateDetails(string? code, string name, string? description)
+    {
+        Code = code;
+        Name = name;
+        Description = description;
+    }
+
+    public void ChangeOrder(int sortOrder) => SortOrder = sortOrder;
 }

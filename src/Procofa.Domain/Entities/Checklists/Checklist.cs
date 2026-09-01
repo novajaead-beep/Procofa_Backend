@@ -50,4 +50,17 @@ public sealed class Checklist
         CreatedByUserId = createdByUserId;
         IsActive = true;
     }
+
+    public void UpdateDetails(Guid programId, Guid profileId, Guid? auditTypeId, string name, string? description)
+    {
+        ProgramId = programId;
+        ProfileId = profileId;
+        AuditTypeId = auditTypeId;
+        Name = name;
+        Description = description;
+    }
+
+    public void Activate() => IsActive = true;
+
+    public void Deactivate() => IsActive = false;
 }

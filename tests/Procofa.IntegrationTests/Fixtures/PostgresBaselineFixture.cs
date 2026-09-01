@@ -293,6 +293,114 @@ public sealed class PostgresBaselineFixture : IAsyncLifetime
         return contactId;
     }
 
+    /// <summary>Crea un checklist mínimo (Program/Profile fijos por código, AuditType opcional).</summary>
+    public async Task<Guid> CreateChecklistAsync(
+        Guid tenantId, Guid createdByUserId, string name, Guid? auditTypeId = null,
+        string programCode = "OEA", string profileCode = "MAQUILA")
+    {
+        var checklistId = Guid.NewGuid();
+        var programId = await GetCatalogIdByCodeAsync("programs", programCode);
+        var profileId = await GetCatalogIdByCodeAsync("profiles", profileCode);
+
+        await using var connection = await OpenSuperuserConnectionAsync();
+        await ExecuteNonQueryAsync(connection, """
+            INSERT INTO public.checklists (
+                id, tenant_id, program_id, profile_id, audit_type_id, name, created_by_user_id)
+            VALUES (@id, @tenantId, @programId, @profileId, @auditTypeId, @name, @createdBy);
+            """, cmd =>
+        {
+            cmd.Parameters.AddWithValue("id", checklistId);
+            cmd.Parameters.AddWithValue("tenantId", tenantId);
+            cmd.Parameters.AddWithValue("programId", programId);
+            cmd.Parameters.AddWithValue("profileId", profileId);
+            cmd.Parameters.AddWithValue("auditTypeId", (object?)auditTypeId ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("name", name);
+            cmd.Parameters.AddWithValue("createdBy", createdByUserId);
+        });
+
+        return checklistId;
+    }
+
+    /// <summary>Crea una checklist_version DRAFT mínima bajo el checklist indicado.</summary>
+    public async Task<Guid> CreateChecklistVersionAsync(
+        Guid tenantId, Guid checklistId, Guid createdByUserId, int versionNumber)
+    {
+        var versionId = Guid.NewGuid();
+
+        await using var connection = await OpenSuperuserConnectionAsync();
+        await ExecuteNonQueryAsync(connection, """
+            INSERT INTO public.checklist_versions (id, tenant_id, checklist_id, version_number, created_by_user_id)
+            VALUES (@id, @tenantId, @checklistId, @versionNumber, @createdBy);
+            """, cmd =>
+        {
+            cmd.Parameters.AddWithValue("id", versionId);
+            cmd.Parameters.AddWithValue("tenantId", tenantId);
+            cmd.Parameters.AddWithValue("checklistId", checklistId);
+            cmd.Parameters.AddWithValue("versionNumber", versionNumber);
+            cmd.Parameters.AddWithValue("createdBy", createdByUserId);
+        });
+
+        return versionId;
+    }
+
+    /// <summary>Marca una checklist_version existente como PUBLISHED — usada por tests que necesitan
+    /// verificar la inmutabilidad de una versión ya publicada sin pasar por el handler.</summary>
+    public async Task PublishChecklistVersionDirectAsync(Guid checklistVersionId)
+    {
+        await using var connection = await OpenSuperuserConnectionAsync();
+        await ExecuteNonQueryAsync(connection, """
+            UPDATE public.checklist_versions
+            SET status = 'PUBLISHED', published_at_utc = now()
+            WHERE id = @id;
+            """, cmd => cmd.Parameters.AddWithValue("id", checklistVersionId));
+    }
+
+    /// <summary>Crea una checklist_section mínima bajo la versión indicada.</summary>
+    public async Task<Guid> CreateChecklistSectionAsync(
+        Guid tenantId, Guid checklistVersionId, string name, int sortOrder = 1)
+    {
+        var sectionId = Guid.NewGuid();
+
+        await using var connection = await OpenSuperuserConnectionAsync();
+        await ExecuteNonQueryAsync(connection, """
+            INSERT INTO public.checklist_sections (id, tenant_id, checklist_version_id, name, sort_order)
+            VALUES (@id, @tenantId, @checklistVersionId, @name, @sortOrder);
+            """, cmd =>
+        {
+            cmd.Parameters.AddWithValue("id", sectionId);
+            cmd.Parameters.AddWithValue("tenantId", tenantId);
+            cmd.Parameters.AddWithValue("checklistVersionId", checklistVersionId);
+            cmd.Parameters.AddWithValue("name", name);
+            cmd.Parameters.AddWithValue("sortOrder", sortOrder);
+        });
+
+        return sectionId;
+    }
+
+    /// <summary>Crea un criterion mínimo bajo la sección indicada.</summary>
+    public async Task<Guid> CreateCriterionAsync(
+        Guid tenantId, Guid checklistSectionId, string code, string auditQuestion, int sortOrder = 1)
+    {
+        var criterionId = Guid.NewGuid();
+
+        await using var connection = await OpenSuperuserConnectionAsync();
+        await ExecuteNonQueryAsync(connection, """
+            INSERT INTO public.criteria (
+                id, tenant_id, checklist_section_id, code, audit_question, sort_order)
+            VALUES (@id, @tenantId, @sectionId, @code, @question, @sortOrder);
+            """, cmd =>
+        {
+            cmd.Parameters.AddWithValue("id", criterionId);
+            cmd.Parameters.AddWithValue("tenantId", tenantId);
+            cmd.Parameters.AddWithValue("sectionId", checklistSectionId);
+            cmd.Parameters.AddWithValue("code", code);
+            cmd.Parameters.AddWithValue("question", auditQuestion);
+            cmd.Parameters.AddWithValue("sortOrder", sortOrder);
+        });
+
+        return criterionId;
+    }
+
     /// <summary>
     /// Busca el <c>id</c> de una fila de catálogo por su <c>code</c> — evita
     /// hardcodear los GUID de <c>003_seed_catalogs.sql</c> en los tests

@@ -32,4 +32,10 @@ public sealed class ProgramRepository(ProcofaDbContext dbContext) : IProgramRepo
             .Select(p => p.Code)
             .ToListAsync(cancellationToken);
     }
+
+    public Task<ComplianceProgram?> GetByIdAsync(Guid id, CancellationToken cancellationToken) =>
+        dbContext.CompliancePrograms.AsNoTracking().FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
+
+    public Task<ComplianceProgram?> FindByCodeAsync(string code, CancellationToken cancellationToken) =>
+        dbContext.CompliancePrograms.AsNoTracking().FirstOrDefaultAsync(p => p.Code == code, cancellationToken);
 }

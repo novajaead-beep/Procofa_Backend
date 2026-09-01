@@ -111,6 +111,13 @@ internal sealed class FakeProgramRepository : IProgramRepository
         IReadOnlyCollection<Guid> programIds, CancellationToken cancellationToken) =>
         Task.FromResult<IReadOnlyCollection<string>>(
             InMemoryProgramCatalog.All.Where(p => programIds.Contains(p.Id)).Select(p => p.Code).ToArray());
+
+    public Task<ComplianceProgram?> GetByIdAsync(Guid id, CancellationToken cancellationToken) =>
+        Task.FromResult(InMemoryProgramCatalog.All.FirstOrDefault(p => p.Id == id));
+
+    public Task<ComplianceProgram?> FindByCodeAsync(string code, CancellationToken cancellationToken) =>
+        Task.FromResult(InMemoryProgramCatalog.All.FirstOrDefault(
+            p => string.Equals(p.Code, code, StringComparison.Ordinal)));
 }
 
 internal sealed class FakeAuditedCompanyRepository : IAuditedCompanyRepository

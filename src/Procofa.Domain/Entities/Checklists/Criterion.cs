@@ -72,4 +72,28 @@ public sealed class Criterion
         IsMandatory = isMandatory;
         SortOrder = sortOrder;
     }
+
+    public void UpdateDetails(
+        string code,
+        string auditQuestion,
+        string? auditorInterpretation,
+        string? expectedEvidence,
+        string? expectedEvidenceType,
+        ImportanceLevel? importanceLevel,
+        string? normativeReference,
+        string? evaluationRecommendation,
+        bool isMandatory)
+    {
+        Code = code;
+        AuditQuestion = auditQuestion;
+        AuditorInterpretation = auditorInterpretation;
+        ExpectedEvidence = expectedEvidence;
+        ExpectedEvidenceType = expectedEvidenceType;
+        ImportanceLevel = importanceLevel;
+        NormativeReference = normativeReference;
+        EvaluationRecommendation = evaluationRecommendation;
+        IsMandatory = isMandatory;
+    }
+
+    public void ChangeOrder(int sortOrder) => SortOrder = sortOrder;
 }
