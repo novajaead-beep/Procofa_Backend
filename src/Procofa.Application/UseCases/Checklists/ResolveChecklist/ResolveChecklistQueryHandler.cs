@@ -59,30 +59,17 @@ public sealed class ResolveChecklistQueryHandler(
             auditTypeId = auditType.Id;
         }
 
-        var isExactMatch = true;
-        var checklist = auditTypeId.HasValue
-            ? await checklistRepository.FindActiveForResolutionAsync(tenantId, program.Id, profile.Id, auditTypeId, ct)
-            : null;
+        var resolution = await ChecklistPublishedResolver.ResolveAsync(
+            checklistRepository, checklistVersionRepository, tenantId, program.Id, profile.Id, auditTypeId, ct);
 
-        if (checklist is null)
-        {
-            isExactMatch = false;
-            checklist = await checklistRepository.FindActiveForResolutionAsync(tenantId, program.Id, profile.Id, null, ct);
-        }
-
-        if (checklist is null)
+        if (resolution is null)
         {
             return ResolveChecklistResult.Failure(ResolveChecklistError.NotFound, "Ningún checklist aplicable.");
         }
 
-        var version = await checklistVersionRepository.GetLatestPublishedAsync(tenantId, checklist.Id, ct);
-        if (version is null)
-        {
-            return ResolveChecklistResult.Failure(
-                ResolveChecklistError.NotFound, "El checklist aplicable no tiene ninguna versión publicada.");
-        }
-
-        return ResolveChecklistResult.Success(checklist.Id, checklist.Name, version.Id, version.VersionNumber, isExactMatch);
+        return ResolveChecklistResult.Success(
+            resolution.Checklist.Id, resolution.Checklist.Name, resolution.Version.Id,
+            resolution.Version.VersionNumber, resolution.IsExactMatch);
     }
 
     private async Task<ComplianceProgram?> ResolveProgramAsync(string codeOrId, CancellationToken ct) =>

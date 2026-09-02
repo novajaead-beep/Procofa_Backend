@@ -12,6 +12,13 @@ using Procofa.Api.Endpoints;
 using Procofa.Api.Security;
 using Procofa.Application.Abstractions;
 using Procofa.Application.Abstractions.Identity;
+using Procofa.Application.UseCases.Audits.CreateAudit;
+using Procofa.Application.UseCases.Audits.GetAudit;
+using Procofa.Application.UseCases.Audits.ListAudits;
+using Procofa.Application.UseCases.Audits.ReplaceAuditChecklists;
+using Procofa.Application.UseCases.Audits.ReplaceAuditPrograms;
+using Procofa.Application.UseCases.Audits.ReplaceAuditTeam;
+using Procofa.Application.UseCases.Audits.UpdateAudit;
 using Procofa.Application.UseCases.Auth.Login;
 using Procofa.Application.UseCases.ChecklistSections.CreateChecklistSection;
 using Procofa.Application.UseCases.ChecklistSections.DeleteChecklistSection;
@@ -147,6 +154,16 @@ builder.Services.AddScoped<CreateCriterionCommandHandler>();
 builder.Services.AddScoped<UpdateCriterionCommandHandler>();
 builder.Services.AddScoped<DeleteCriterionCommandHandler>();
 
+// Planificación de auditorías — mismo criterio: registro directo en el Composition Root, sin
+// contenedor DI en Application.
+builder.Services.AddScoped<ListAuditsQueryHandler>();
+builder.Services.AddScoped<GetAuditQueryHandler>();
+builder.Services.AddScoped<CreateAuditCommandHandler>();
+builder.Services.AddScoped<UpdateAuditCommandHandler>();
+builder.Services.AddScoped<ReplaceAuditProgramsCommandHandler>();
+builder.Services.AddScoped<ReplaceAuditTeamCommandHandler>();
+builder.Services.AddScoped<ReplaceAuditChecklistsCommandHandler>();
+
 // ICurrentUser: implementación HTTP vive en Api (Procofa.Api.Security.HttpContextCurrentUser) —
 // Application solo conoce el puerto. Scoped porque lee HttpContext.
 builder.Services.AddHttpContextAccessor();
@@ -247,6 +264,7 @@ app.MapChecklistEndpoints();
 app.MapChecklistVersionEndpoints();
 app.MapChecklistSectionEndpoints();
 app.MapCriterionEndpoints();
+app.MapAuditEndpoints();
 
 app.Run();
 return 0;

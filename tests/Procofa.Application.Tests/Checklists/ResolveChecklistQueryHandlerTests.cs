@@ -67,6 +67,89 @@ public sealed class ResolveChecklistQueryHandlerTests
     }
 
     [Fact]
+    public async Task Resolve_ExactoPublicadoYGenericoPublicado_GanaElExacto()
+    {
+        var exact = new Checklist(
+            Guid.NewGuid(), TenantId, InMemoryProgramCatalog.Oea.Id, InMemoryProfileCatalog.Maquila.Id,
+            InMemoryAuditTypeCatalog.InternaOea.Id, "Exacto", null, UserId);
+        var generic = new Checklist(
+            Guid.NewGuid(), TenantId, InMemoryProgramCatalog.Oea.Id, InMemoryProfileCatalog.Maquila.Id, null,
+            "Genérico", null, UserId);
+        var exactVersion = PublishedVersion(exact.Id, 1);
+        var genericVersion = PublishedVersion(generic.Id, 1);
+        var (handler, _, _) = CreateHandler(
+            new FakeChecklistRepository(exact, generic),
+            new FakeChecklistVersionRepository(exactVersion, genericVersion));
+
+        var result = await handler.HandleAsync(
+            new ResolveChecklistQuery("OEA", "MAQUILA", "INTERNA_OEA"), CancellationToken.None);
+
+        Assert.True(result.IsSuccess);
+        Assert.True(result.IsExactMatch);
+        Assert.Equal(exact.Id, result.ChecklistId);
+    }
+
+    [Fact]
+    public async Task Resolve_ExactoSoloDraftYGenericoPublicado_CaeAlGenerico()
+    {
+        var exact = new Checklist(
+            Guid.NewGuid(), TenantId, InMemoryProgramCatalog.Oea.Id, InMemoryProfileCatalog.Maquila.Id,
+            InMemoryAuditTypeCatalog.InternaOea.Id, "Exacto Draft", null, UserId);
+        var generic = new Checklist(
+            Guid.NewGuid(), TenantId, InMemoryProgramCatalog.Oea.Id, InMemoryProfileCatalog.Maquila.Id, null,
+            "Genérico", null, UserId);
+        var exactDraft = new ChecklistVersion(Guid.NewGuid(), TenantId, exact.Id, 1, UserId);
+        var genericVersion = PublishedVersion(generic.Id, 1);
+        var (handler, _, _) = CreateHandler(
+            new FakeChecklistRepository(exact, generic),
+            new FakeChecklistVersionRepository(exactDraft, genericVersion));
+
+        var result = await handler.HandleAsync(
+            new ResolveChecklistQuery("OEA", "MAQUILA", "INTERNA_OEA"), CancellationToken.None);
+
+        Assert.True(result.IsSuccess);
+        Assert.False(result.IsExactMatch);
+        Assert.Equal(generic.Id, result.ChecklistId);
+    }
+
+    [Fact]
+    public async Task Resolve_DosExactosUnoDraftUnoPublicado_ResuelveElPublicadoNuncaElGenerico()
+    {
+        // Sin UNIQUE de BD sobre (program, profile, audit_type_id): dos checklists activos pueden
+        // coincidir con la misma combinación exacta. El primero (más reciente) está en DRAFT — la
+        // resolución debe seguir probando candidatos exactos antes de caer al genérico.
+        var exactDraft = new Checklist(
+            Guid.NewGuid(), TenantId, InMemoryProgramCatalog.Oea.Id, InMemoryProfileCatalog.Maquila.Id,
+            InMemoryAuditTypeCatalog.InternaOea.Id, "Exacto Draft Más Reciente", null, UserId);
+        var exactPublished = new Checklist(
+            Guid.NewGuid(), TenantId, InMemoryProgramCatalog.Oea.Id, InMemoryProfileCatalog.Maquila.Id,
+            InMemoryAuditTypeCatalog.InternaOea.Id, "Exacto Publicado Más Antiguo", null, UserId);
+        var generic = new Checklist(
+            Guid.NewGuid(), TenantId, InMemoryProgramCatalog.Oea.Id, InMemoryProfileCatalog.Maquila.Id, null,
+            "Genérico", null, UserId);
+
+        typeof(Checklist).GetProperty(nameof(Checklist.CreatedAtUtc))!
+            .SetValue(exactDraft, DateTime.UtcNow);
+        typeof(Checklist).GetProperty(nameof(Checklist.CreatedAtUtc))!
+            .SetValue(exactPublished, DateTime.UtcNow.AddDays(-1));
+
+        var draftVersion = new ChecklistVersion(Guid.NewGuid(), TenantId, exactDraft.Id, 1, UserId);
+        var publishedVersion = PublishedVersion(exactPublished.Id, 1);
+        var genericVersion = PublishedVersion(generic.Id, 1);
+
+        var (handler, _, _) = CreateHandler(
+            new FakeChecklistRepository(exactDraft, exactPublished, generic),
+            new FakeChecklistVersionRepository(draftVersion, publishedVersion, genericVersion));
+
+        var result = await handler.HandleAsync(
+            new ResolveChecklistQuery("OEA", "MAQUILA", "INTERNA_OEA"), CancellationToken.None);
+
+        Assert.True(result.IsSuccess);
+        Assert.True(result.IsExactMatch);
+        Assert.Equal(exactPublished.Id, result.ChecklistId);
+    }
+
+    [Fact]
     public async Task Resolve_ConVersionSoloDraft_NuncaLaDevuelve()
     {
         var checklist = new Checklist(

@@ -69,7 +69,7 @@ public sealed class ChecklistRepository(ProcofaDbContext dbContext) : IChecklist
         return new ChecklistListPageResult(items, total);
     }
 
-    public async Task<Checklist?> FindActiveForResolutionAsync(
+    public async Task<IReadOnlyList<Checklist>> ListActiveCandidatesAsync(
         Guid tenantId, Guid programId, Guid profileId, Guid? auditTypeId, CancellationToken cancellationToken)
     {
         var query = dbContext.Checklists.AsNoTracking().Where(c =>
@@ -79,6 +79,6 @@ public sealed class ChecklistRepository(ProcofaDbContext dbContext) : IChecklist
         return await query
             .OrderByDescending(c => c.CreatedAtUtc)
             .ThenByDescending(c => c.Id)
-            .FirstOrDefaultAsync(cancellationToken);
+            .ToListAsync(cancellationToken);
     }
 }

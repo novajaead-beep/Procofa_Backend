@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Procofa.Application.Abstractions;
+using Procofa.Application.Abstractions.Audits;
 using Procofa.Application.Abstractions.Catalogs;
 using Procofa.Application.Abstractions.Checklists;
 using Procofa.Application.Abstractions.Clients;
@@ -77,11 +78,15 @@ public static class DependencyInjection
         services.AddScoped<IProgramRepository, ProgramRepository>();
         services.AddScoped<IProfileRepository, ProfileRepository>();
         services.AddScoped<IAuditTypeRepository, AuditTypeRepository>();
+        services.AddScoped<IAuditStatusRepository, AuditStatusRepository>();
 
         services.AddScoped<IChecklistRepository, ChecklistRepository>();
         services.AddScoped<IChecklistVersionRepository, ChecklistVersionRepository>();
         services.AddScoped<IChecklistSectionRepository, ChecklistSectionRepository>();
         services.AddScoped<ICriterionRepository, CriterionRepository>();
+
+        services.AddScoped<IAuditRepository, AuditRepository>();
+        services.AddScoped<IAuditChecklistRepository, AuditChecklistRepository>();
 
         // Adapters de seguridad — sin estado propio salvo la config ya resuelta, seguros como singleton.
         services.AddSingleton<IPasswordHasher, PasswordHasherAdapter>();

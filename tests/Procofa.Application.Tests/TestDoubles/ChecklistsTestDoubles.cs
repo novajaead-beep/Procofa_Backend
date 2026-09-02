@@ -103,15 +103,15 @@ internal sealed class FakeChecklistRepository : IChecklistRepository
         return Task.FromResult(new ChecklistListPageResult(items, materialized.Count));
     }
 
-    public Task<Checklist?> FindActiveForResolutionAsync(
+    public Task<IReadOnlyList<Checklist>> ListActiveCandidatesAsync(
         Guid tenantId, Guid programId, Guid profileId, Guid? auditTypeId, CancellationToken cancellationToken) =>
-        Task.FromResult(_checklists
+        Task.FromResult<IReadOnlyList<Checklist>>(_checklists
             .Where(c =>
                 c.TenantId == tenantId && c.IsActive && c.ProgramId == programId && c.ProfileId == profileId &&
                 c.AuditTypeId == auditTypeId)
             .OrderByDescending(c => c.CreatedAtUtc)
             .ThenByDescending(c => c.Id)
-            .FirstOrDefault());
+            .ToArray());
 }
 
 internal sealed class FakeChecklistVersionRepository : IChecklistVersionRepository
