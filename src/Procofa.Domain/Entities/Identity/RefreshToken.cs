@@ -7,9 +7,9 @@ namespace Procofa.Domain.Entities.Identity;
 /// <see cref="TokenHash"/> es <c>UNIQUE</c> a nivel de BD — nunca se
 /// persiste el token crudo, solo su hash.
 ///
-/// Nota (baseline V2.1, decisión congelada #8): esta entidad NO escribe en
-/// <c>access_logs</c> (su refresh/revoke no tiene un <c>event_type</c> válido
-/// en el CHECK de esa tabla) — usa structured logging por ahora.
+/// Nota: esta entidad NO escribe en <c>access_logs</c> en su refresh/revoke — no existe un
+/// <c>event_type</c> válido para esas acciones en el CHECK de esa tabla — así que usa structured
+/// logging en su lugar.
 /// </summary>
 public sealed class RefreshToken
 {
