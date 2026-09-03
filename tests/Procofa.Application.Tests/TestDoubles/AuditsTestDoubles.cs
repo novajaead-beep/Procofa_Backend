@@ -152,14 +152,14 @@ internal sealed class FakeAuditChecklistRepository : IAuditChecklistRepository
         }
 
         var details = from ac in _auditChecklists
-                       where ac.TenantId == tenantId && ac.AuditId == auditId
-                       join version in _versions.Versions on new { ac.TenantId, ChecklistVersionId = ac.ChecklistVersionId }
-                           equals new { version.TenantId, ChecklistVersionId = version.Id }
-                       join checklist in _checklists.Checklists on new { version.TenantId, ChecklistId = version.ChecklistId }
-                           equals new { checklist.TenantId, ChecklistId = checklist.Id }
-                       select new AuditChecklistDetail(
-                           ac.Id, checklist.Id, version.Id, version.VersionNumber, checklist.Name, checklist.ProgramId,
-                           checklist.ProfileId, checklist.AuditTypeId, ac.AssignedAtUtc);
+                      where ac.TenantId == tenantId && ac.AuditId == auditId
+                      join version in _versions.Versions on new { ac.TenantId, ChecklistVersionId = ac.ChecklistVersionId }
+                          equals new { version.TenantId, ChecklistVersionId = version.Id }
+                      join checklist in _checklists.Checklists on new { version.TenantId, ChecklistId = version.ChecklistId }
+                          equals new { checklist.TenantId, ChecklistId = checklist.Id }
+                      select new AuditChecklistDetail(
+                          ac.Id, checklist.Id, version.Id, version.VersionNumber, checklist.Name, checklist.ProgramId,
+                          checklist.ProfileId, checklist.AuditTypeId, ac.AssignedAtUtc);
 
         return Task.FromResult<IReadOnlyList<AuditChecklistDetail>>(
             details.ToArray());

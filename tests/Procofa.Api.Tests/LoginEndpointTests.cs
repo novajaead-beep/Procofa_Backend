@@ -1,4 +1,5 @@
 using System.Net;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
@@ -42,11 +43,19 @@ public sealed class LoginEndpointTests : IAsyncLifetime
                     ["Auth:MaxFailedLoginAttempts"] = "5",
                     ["Auth:LockoutMinutes"] = "15",
                     ["Auth:RefreshTokenDays"] = "30",
+                    ["Auth:RefreshCookie:Name"] = "procofa_refresh",
+                    ["Auth:RefreshCookie:Secure"] = "false",
+                    ["Auth:RefreshCookie:SameSite"] = "Strict",
+                    ["Auth:RefreshCookie:Path"] = "/api/auth",
                 });
             });
         });
 
-        _client = _factory.CreateClient();
+        _client = _factory.CreateClient(
+     new WebApplicationFactoryClientOptions
+     {
+         HandleCookies = true,
+     });
         return Task.CompletedTask;
     }
 
@@ -60,23 +69,57 @@ public sealed class LoginEndpointTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task PostLogin_ConCredencialesValidas_Devuelve200ConTokens()
+    public async Task PostLogin_ConCredencialesValidas_Devuelve200YCookieHttpOnly()
     {
-        var passwordHash = new PasswordHasherAdapter().HashPassword("una-contraseña-segura-de-api-tests");
-        var email = $"api-login-ok.{Guid.NewGuid():N}@procofa-test.invalid";
+        var passwordHash =
+            new PasswordHasherAdapter()
+                .HashPassword(
+                    "una-contraseña-segura-de-api-tests");
+
+        var email =
+            $"api-login-ok.{Guid.NewGuid():N}@procofa-test.invalid";
+
         await _fixture.CreateUserWithPasswordAsync(
-            AuthHandlerFactory.ProcofaTenantId, email, passwordHash, "AUDITOR_LIDER");
+            AuthHandlerFactory.ProcofaTenantId,
+            email,
+            passwordHash,
+            "AUDITOR_LIDER");
 
-        var response = await _client!.PostAsJsonAsync(
-            "/api/auth/login", new { email, password = "una-contraseña-segura-de-api-tests" });
+        var response =
+            await _client!.PostAsJsonAsync(
+                "/api/auth/login",
+                new
+                {
+                    email,
+                    password =
+                        "una-contraseña-segura-de-api-tests",
+                });
 
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal(
+            HttpStatusCode.OK,
+            response.StatusCode);
 
-        var body = await response.Content.ReadFromJsonAsync<LoginResponse>();
+        var body =
+            await response.Content
+                .ReadFromJsonAsync<LoginResponse>();
+
         Assert.NotNull(body);
-        Assert.False(string.IsNullOrWhiteSpace(body!.AccessToken));
-        Assert.False(string.IsNullOrWhiteSpace(body.RefreshToken));
+
+        Assert.False(
+            string.IsNullOrWhiteSpace(
+                body!.AccessToken));
+
+        Assert.Contains(
+            response.Headers.GetValues("Set-Cookie"),
+            value =>
+                value.Contains(
+                    "procofa_refresh=",
+                    StringComparison.OrdinalIgnoreCase) &&
+                value.Contains(
+                    "httponly",
+                    StringComparison.OrdinalIgnoreCase));
     }
+
 
     [Fact]
     public async Task PostLogin_ConCredencialesIncorrectas_Devuelve401Generico()
@@ -94,5 +137,122 @@ public sealed class LoginEndpointTests : IAsyncLifetime
 
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         Assert.Equal("application/problem+json", response.Content.Headers.ContentType?.MediaType);
+    }
+
+    [Fact]
+    public async Task PostLogout_RevocaRefreshToken()
+    {
+        var password =
+            "una-contraseña-segura-logout";
+
+        var passwordHash =
+            new PasswordHasherAdapter()
+                .HashPassword(password);
+
+        var email =
+            $"api-logout.{Guid.NewGuid():N}@procofa-test.invalid";
+
+        await _fixture.CreateUserWithPasswordAsync(
+            AuthHandlerFactory.ProcofaTenantId,
+            email,
+            passwordHash,
+            "AUDITOR_LIDER");
+
+        var loginResponse =
+            await _client!.PostAsJsonAsync(
+                "/api/auth/login",
+                new
+                {
+                    email,
+                    password,
+                });
+
+        Assert.Equal(
+            HttpStatusCode.OK,
+            loginResponse.StatusCode);
+
+        var logoutResponse =
+            await _client.PostAsync(
+                "/api/auth/logout",
+                content: null);
+
+        Assert.Equal(
+            HttpStatusCode.NoContent,
+            logoutResponse.StatusCode);
+
+        var refreshResponse =
+            await _client.PostAsync(
+                "/api/auth/refresh",
+                content: null);
+
+        Assert.Equal(
+            HttpStatusCode.Unauthorized,
+            refreshResponse.StatusCode);
+    }
+
+    [Fact]
+    public async Task GetMe_ConAccessTokenValido_DevuelveUsuario()
+    {
+        var password =
+            "una-contraseña-segura-me";
+
+        var passwordHash =
+            new PasswordHasherAdapter()
+                .HashPassword(password);
+
+        var email =
+            $"api-me.{Guid.NewGuid():N}@procofa-test.invalid";
+
+        await _fixture.CreateUserWithPasswordAsync(
+            AuthHandlerFactory.ProcofaTenantId,
+            email,
+            passwordHash,
+            "AUDITOR_LIDER");
+
+        var loginResponse =
+            await _client!.PostAsJsonAsync(
+                "/api/auth/login",
+                new
+                {
+                    email,
+                    password,
+                });
+
+        Assert.Equal(
+            HttpStatusCode.OK,
+            loginResponse.StatusCode);
+
+        var loginBody =
+            await loginResponse.Content
+                .ReadFromJsonAsync<LoginResponse>();
+
+        Assert.NotNull(loginBody);
+
+        _client.DefaultRequestHeaders.Authorization =
+            new AuthenticationHeaderValue(
+                "Bearer",
+                loginBody!.AccessToken);
+
+        var meResponse =
+            await _client.GetAsync(
+                "/api/auth/me");
+
+        Assert.Equal(
+            HttpStatusCode.OK,
+            meResponse.StatusCode);
+
+        var me =
+            await meResponse.Content
+                .ReadFromJsonAsync<CurrentUserResponse>();
+
+        Assert.NotNull(me);
+
+        Assert.Equal(
+            email,
+            me!.Email);
+
+        Assert.Contains(
+            "AUDITOR_LIDER",
+            me.Roles);
     }
 }

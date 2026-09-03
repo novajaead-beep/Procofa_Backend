@@ -35,7 +35,7 @@ public sealed class AuthLoginIntegrationTests(PostgresBaselineFixture fixture)
         Assert.False(string.IsNullOrWhiteSpace(result.RefreshToken));
 
         // El refresh token NUNCA se persiste en texto plano — solo su hash.
-       await using var verifyContext = fixture.CreateDbContext(fixture.SuperuserConnectionString);
+        await using var verifyContext = fixture.CreateDbContext(fixture.SuperuserConnectionString);
         var persisted = await verifyContext.RefreshTokens
             .Where(t => t.UserId == userId)
             .SingleAsync();
@@ -66,7 +66,7 @@ public sealed class AuthLoginIntegrationTests(PostgresBaselineFixture fixture)
         Assert.False(result.IsSuccess);
         Assert.Equal(LoginError.InvalidCredentials, result.Error);
 
-       await using var verifyContext = fixture.CreateDbContext(fixture.SuperuserConnectionString);
+        await using var verifyContext = fixture.CreateDbContext(fixture.SuperuserConnectionString);
 
         var loginFailureLogs = await verifyContext.AccessLogs
             .Where(l => l.UserId == userId && l.EventType == AccessLogEventType.LoginFailure)

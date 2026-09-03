@@ -12,6 +12,7 @@ using Procofa.Api.Endpoints;
 using Procofa.Api.Security;
 using Procofa.Application.Abstractions;
 using Procofa.Application.Abstractions.Identity;
+using Procofa.Application.Abstractions.Tenancy; //nuevo no existe local storage, session storage, etc. para tenantId, se resuelve desde HttpContext en cada request
 using Procofa.Application.UseCases.Audits.CreateAudit;
 using Procofa.Application.UseCases.Audits.GetAudit;
 using Procofa.Application.UseCases.Audits.ListAudits;
@@ -19,17 +20,20 @@ using Procofa.Application.UseCases.Audits.ReplaceAuditChecklists;
 using Procofa.Application.UseCases.Audits.ReplaceAuditPrograms;
 using Procofa.Application.UseCases.Audits.ReplaceAuditTeam;
 using Procofa.Application.UseCases.Audits.UpdateAudit;
+using Procofa.Application.UseCases.Auth.GetCurrentUser;
 using Procofa.Application.UseCases.Auth.Login;
-using Procofa.Application.UseCases.ChecklistSections.CreateChecklistSection;
-using Procofa.Application.UseCases.ChecklistSections.DeleteChecklistSection;
-using Procofa.Application.UseCases.ChecklistSections.ListChecklistSections;
-using Procofa.Application.UseCases.ChecklistSections.UpdateChecklistSection;
+using Procofa.Application.UseCases.Auth.Logout;
+using Procofa.Application.UseCases.Auth.RefreshSession;
 using Procofa.Application.UseCases.Checklists.ChangeChecklistStatus;
 using Procofa.Application.UseCases.Checklists.CreateChecklist;
 using Procofa.Application.UseCases.Checklists.GetChecklist;
 using Procofa.Application.UseCases.Checklists.ListChecklists;
 using Procofa.Application.UseCases.Checklists.ResolveChecklist;
 using Procofa.Application.UseCases.Checklists.UpdateChecklist;
+using Procofa.Application.UseCases.ChecklistSections.CreateChecklistSection;
+using Procofa.Application.UseCases.ChecklistSections.DeleteChecklistSection;
+using Procofa.Application.UseCases.ChecklistSections.ListChecklistSections;
+using Procofa.Application.UseCases.ChecklistSections.UpdateChecklistSection;
 using Procofa.Application.UseCases.ChecklistVersions.CreateChecklistVersion;
 using Procofa.Application.UseCases.ChecklistVersions.GetChecklistVersion;
 using Procofa.Application.UseCases.ChecklistVersions.ListChecklistVersions;
@@ -93,6 +97,12 @@ builder.Services.AddSingleton(sp =>
         sp.GetRequiredService<IConfiguration>()));
 
 builder.Services.AddInfrastructure();
+
+builder.Services.AddSingleton(sp => //Ange: nuevo que resuelve IConfiguration desde DI, no desde builder.Configuration, para que WebApplicationFactory pueda sobreescribir Jwt:SigningKey en tests
+    RefreshCookieSettingsFactory.Create(
+        sp.GetRequiredService<IConfiguration>()));
+
+builder.Services.AddSingleton<RefreshCookieManager>();
 
 // Sin AddApplication(IServiceCollection) propio todavía (Application sigue sin depender de
 // Microsoft.Extensions.DependencyInjection.Abstractions), se registra aquí directamente en el
@@ -164,10 +174,20 @@ builder.Services.AddScoped<ReplaceAuditProgramsCommandHandler>();
 builder.Services.AddScoped<ReplaceAuditTeamCommandHandler>();
 builder.Services.AddScoped<ReplaceAuditChecklistsCommandHandler>();
 
+// Casos de uso de autenticación — mismo criterio: registro directo en el Composition Root, sin
+builder.Services.AddScoped<LoginCommandHandler>();
+builder.Services.AddScoped<RefreshSessionCommandHandler>();
+builder.Services.AddScoped<LogoutCommandHandler>();
+builder.Services.AddScoped<GetCurrentUserQueryHandler>();
+
 // ICurrentUser: implementación HTTP vive en Api (Procofa.Api.Security.HttpContextCurrentUser) —
 // Application solo conoce el puerto. Scoped porque lee HttpContext.
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ICurrentUser, HttpContextCurrentUser>();
+
+builder.Services.AddScoped<
+    ITenantContext,
+    HttpContextTenantContext>(); //sobrescribe para el host web la implementación Stage1TenantContext registrada por Infrastructure.
 
 // Primera vez que el proyecto exige JWT — hasta ahora solo se EMITÍA el token (login), nunca se
 // VALIDABA en un endpoint protegido. Igual que ProcofaDb/InfrastructureAuthSettings, la validación

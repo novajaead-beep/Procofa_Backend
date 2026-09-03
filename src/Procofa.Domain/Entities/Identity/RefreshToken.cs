@@ -31,4 +31,23 @@ public sealed class RefreshToken
         TokenHash = tokenHash;
         ExpiresAtUtc = expiresAtUtc;
     }
+
+    public bool IsExpired(DateTime nowUtc) =>
+    ExpiresAtUtc <= nowUtc;
+
+    public bool IsRevoked =>
+        RevokedAtUtc.HasValue;
+
+    public bool IsActive(DateTime nowUtc) =>
+        !IsRevoked && !IsExpired(nowUtc);
+
+    public void Revoke(DateTime nowUtc)
+    {
+        if (RevokedAtUtc.HasValue)
+        {
+            return;
+        }
+
+        RevokedAtUtc = nowUtc;
+    }
 }

@@ -104,10 +104,10 @@ public static class DependencyInjection
         settings.JwtAccessTokenMinutes);
 });
 
-       services.AddSingleton<IAuthPolicyOptions>(sp =>
-{
-    var settings = sp.GetRequiredService<InfrastructureAuthSettings>();
-    return new AuthPolicyOptionsAdapter(settings);
-});
+        services.AddSingleton<IAuthPolicyOptions>(sp =>
+ {
+     var settings = sp.GetRequiredService<InfrastructureAuthSettings>();
+     return new AuthPolicyOptionsAdapter(settings);
+ });
     }
 }

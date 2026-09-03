@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
-using Procofa.Application.UseCases.ChecklistSections.CreateChecklistSection;
-using Procofa.Application.UseCases.ChecklistSections.DeleteChecklistSection;
 using Procofa.Application.UseCases.Checklists.CreateChecklist;
 using Procofa.Application.UseCases.Checklists.ResolveChecklist;
 using Procofa.Application.UseCases.Checklists.UpdateChecklist;
+using Procofa.Application.UseCases.ChecklistSections.CreateChecklistSection;
+using Procofa.Application.UseCases.ChecklistSections.DeleteChecklistSection;
 using Procofa.Application.UseCases.ChecklistVersions.CreateChecklistVersion;
 using Procofa.Application.UseCases.ChecklistVersions.PublishChecklistVersion;
 using Procofa.Application.UseCases.ChecklistVersions.UpdateChecklistVersion;

@@ -6,6 +6,7 @@ using Procofa.Api.Contracts.Users;
 using Procofa.IntegrationTests.Auth;
 using Procofa.IntegrationTests.Fixtures;
 namespace Procofa.Api.Tests.Users;
+
 using Microsoft.Extensions.Configuration;
 
 
