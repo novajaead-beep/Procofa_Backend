@@ -146,10 +146,42 @@ internal sealed class FakeRefreshTokenRepository : IRefreshTokenRepository
 {
     public List<RefreshToken> Added { get; } = [];
 
-    public Task AddAsync(RefreshToken refreshToken, CancellationToken cancellationToken)
+    public Task AddAsync(
+        RefreshToken refreshToken,
+        CancellationToken cancellationToken)
     {
         Added.Add(refreshToken);
+
         return Task.CompletedTask;
+    }
+
+    public Task<RefreshToken?> FindByHashForUpdateAsync(
+        Guid tenantId,
+        string tokenHash,
+        CancellationToken cancellationToken)
+    {
+        var refreshToken = Added.FirstOrDefault(token =>
+            token.TenantId == tenantId &&
+            token.TokenHash == tokenHash);
+
+        return Task.FromResult(refreshToken);
+    }
+
+    public Task<IReadOnlyList<RefreshToken>> ListActiveByUserAsync(
+        Guid tenantId,
+        Guid userId,
+        DateTime nowUtc,
+        CancellationToken cancellationToken)
+    {
+        IReadOnlyList<RefreshToken> refreshTokens = Added
+            .Where(token =>
+                token.TenantId == tenantId &&
+                token.UserId == userId &&
+                token.RevokedAtUtc is null &&
+                token.ExpiresAtUtc > nowUtc)
+            .ToList();
+
+        return Task.FromResult(refreshTokens);
     }
 }
 
@@ -174,7 +206,22 @@ internal sealed class FakeAccessTokenGenerator : IAccessTokenGenerator
 
 internal sealed class FakeRefreshTokenFactory : IRefreshTokenFactory
 {
-    public GeneratedRefreshToken Create() => new("fake-raw-refresh-token", "fake-refresh-token-hash");
+    private const string RawToken = "fake-raw-refresh-token";
+    private const string TokenHash = "fake-refresh-token-hash";
+
+    public GeneratedRefreshToken Create()
+    {
+        return new GeneratedRefreshToken(
+            RawToken,
+            TokenHash);
+    }
+
+    public string Hash(string rawToken)
+    {
+        return rawToken == RawToken
+            ? TokenHash
+            : $"fake-hash:{rawToken}";
+    }
 }
 
 internal sealed class FakeAuthPolicyOptions : IAuthPolicyOptions

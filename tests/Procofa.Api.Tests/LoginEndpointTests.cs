@@ -21,6 +21,10 @@ public sealed class LoginEndpointTests : IAsyncLifetime
     private WebApplicationFactory<Program>? _factory;
     private HttpClient? _client;
 
+    private HttpClient Client =>
+    _client ??
+    throw new InvalidOperationException(
+        "El cliente HTTP todavía no fue inicializado.");
     public LoginEndpointTests(PostgresBaselineFixture fixture)
     {
         _fixture = fixture;
